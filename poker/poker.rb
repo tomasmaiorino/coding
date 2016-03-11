@@ -110,8 +110,32 @@ class Poker
 	end
 
 	def check_all_cards_in_sequence(cards)
-		ordered_cards = sort_cards(@cards, cards)
-		puts "ordered_cards #{ordered_cards}"
+		cards_without_n = remove_n(sort_cards(@cards, cards))
+		s = true
+		puts "received cards #{cards_without_n}"
+		cards_without_n.each_with_index{|val, ind|
+			if val.match(/\d/) != nil
+				if ind < cards_without_n.length - 1
+					puts "actual #{val} - next #{cards_without_n[ind + 1]}"
+					if val.to_i == 10 && cards_without_n[ind + 1] != "J"
+						puts 'changing for false'
+						s = false
+					elsif (val.to_i + 1 != cards_without_n[ind  + 1].to_i)
+						puts 'changing for false'
+						s = false
+					end
+				end
+			else
+				if ind < cards_without_n.length - 1
+					puts "actual #{val} - next #{cards_without_n[ind + 1]}"
+					if val == 'J' && cards_without_n[ind + 1]  != 'Q' || val == 'Q' && cards_without_n[ind + 1] != 'K' ||  val == 'K' && cards_without_n[ind + 1] != 'A'
+						puts 'changing for false'
+						s = false
+					end
+				end	
+			end
+		}
+		return s
 	end
 end
 =begin

@@ -211,9 +211,38 @@ class PokerTest < Minitest::Test
 		assert !p.check_all_cards_for_same_naipe(cards)
 	end
 
+	def test_check_all_cards_not_in_sequence_2
+		p = Poker.new
+		cards = ["5A", "3A", "4A", "7A", "10D"]
+		s = p.check_all_cards_in_sequence(cards)
+		assert !s
+	end
+
+	def test_check_all_cards_not_in_sequence_1
+		p = Poker.new
+		cards = ["9A", "AA", "QA", "JA", "10D"]
+		s = p.check_all_cards_in_sequence(cards)
+		assert !s
+	end
+
+	def test_check_all_cards_not_in_sequence_3
+		p = Poker.new
+		cards = ["AA", "AA", "QA", "JA", "10D"]
+		s = p.check_all_cards_in_sequence(cards)
+		assert !s
+	end	
+
 	def test_check_all_cards_in_sequence
 		p = Poker.new
-		cards = ["5A", "3A", "4A", "JA", "AD"]
-		p.check_all_cards_in_sequence(cards)
+		cards = ["5A", "3A", "4A", "6A", "2D"]
+		s = p.check_all_cards_in_sequence(cards)
+		assert s
 	end
+
+	def test_check_all_cards_in_sequence_1
+		p = Poker.new
+		cards = ["8A", "9A", "10A", "JA", "QD"]
+		s = p.check_all_cards_in_sequence(cards)
+		assert s
+	end	
 end
