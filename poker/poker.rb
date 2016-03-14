@@ -3,6 +3,7 @@ class Poker
 	def initialize
 		@cards = ['2','3','4','5','6','7','8','9','10','J','Q','K', 'A']
 		@deck = ['D','H','S','C']
+		@all_cards = initialize_all_cards(@cards, @deck)
 	end
 
 	def create_cards(type_card, cards)
@@ -33,24 +34,15 @@ class Poker
 
 	def sort_cards(model, to_order)
 		n = []
-	#	puts "model #{model}"
-	#	puts "to_order #{to_order}"
-		model.each_with_index do |item, index|
-	  		#puts "current_index: #{index} value #{model[index.to_i]}"
-	  		to_order.each_with_index do |val, ind|
-	  			if model[index.to_i] == to_order[ind][0, to_order[ind].length - 1]
-	  				#t[0, t.length - 1]
-		  				#puts "has #{to_order[ind]}"
-		  				n << to_order[ind]
-	  			end	
-	  			#puts "current_index to order: #{ind} value #{model[val.to_i]}"
-	  			#puts "main index #{index}"
-	  		end
-	  		#if to_order.include?(model[index])
-	  		#	puts "adding #{model[index]}"
-	  		#	n << model[index]
-	  		#end
-	  	end
+		if to_order != nil && !to_order.empty?
+			model.each_with_index do |item, index|
+		  		to_order.each_with_index do |val, ind|
+		  			if model[index.to_i] == to_order[ind][0, to_order[ind].length - 1]
+			  				n << to_order[ind]
+		  			end	
+		  		end
+		  	end
+		  end
 	  	return n
 	end	
 
@@ -59,11 +51,9 @@ class Poker
 	end
 
 	def get_sets(cards, numbers_to_match)
-		puts "Cards received: #{cards}"
 		n = {}
 		if cards != nil && !cards.empty?
-			cards_without_n = remove_n(cards)
-			puts "Cards without naipe: #{cards_without_n}"
+			cards_without_n = remove_n(cards)			
 			cards_without_n.each_with_index { |val, ind|
 				if cards_without_n.count(val) == numbers_to_match				
 					indexes = cards_without_n.size.times.select {|i| cards_without_n[i] == cards_without_n[ind.to_i]}
@@ -112,24 +102,23 @@ class Poker
 	def check_all_cards_in_sequence(cards)
 		cards_without_n = remove_n(sort_cards(@cards, cards))
 		s = true
-		puts "received cards #{cards_without_n}"
 		cards_without_n.each_with_index{|val, ind|
+			# check if the card is a number
 			if val.match(/\d/) != nil
+				# check if this is the last one
 				if ind < cards_without_n.length - 1
-					puts "actual #{val} - next #{cards_without_n[ind + 1]}"
-					if val.to_i == 10 && cards_without_n[ind + 1] != "J"
-						puts 'changing for false'
-						s = false
+					# check if the actual card is a 10
+					if val.to_i == 10 
+						if cards_without_n[ind + 1] != "J"
+							s = false
+						end
 					elsif (val.to_i + 1 != cards_without_n[ind  + 1].to_i)
-						puts 'changing for false'
 						s = false
 					end
 				end
 			else
 				if ind < cards_without_n.length - 1
-					puts "actual #{val} - next #{cards_without_n[ind + 1]}"
 					if val == 'J' && cards_without_n[ind + 1]  != 'Q' || val == 'Q' && cards_without_n[ind + 1] != 'K' ||  val == 'K' && cards_without_n[ind + 1] != 'A'
-						puts 'changing for false'
 						s = false
 					end
 				end	
@@ -137,14 +126,38 @@ class Poker
 		}
 		return s
 	end
+
+	def if_full_house(cards)
+		t = check_three(cards)
+		p = check_pair(cards)
+		!t.empty? && t.length == 1 and !p.empty? && p.length == 1
+	end
+
+	def is_straight(cards)
+		check_all_cards_in_sequence(cards)
+	end
+
+	def is_straight_flush(cards)
+		check_all_cards_in_sequence(cards) && check_all_cards_for_same_naipe(cards)
+	end
+
+	def is_royal_flush(cards)
+		sorted_cards = sort_cards(@cards, cards)
+		is_straight_flush(cards) && !sorted_cards.empty? && sorted_cards[0][0,2] == '10'
+	end
+
+	def initialize_all_cards(cards, deck)
+		all_cards = []
+		if !cards.nil? && !cards.empty? && !deck.nil?  && !deck.empty?
+			deck.each{ |val|
+				#puts  create_cards(val, cards_without_n)	
+				all_cards.concat create_cards(val, cards)
+			}
+		end
+		return all_cards
+	end
 end
 =begin
-#create all cards
-d = create_cards('D', cards)
-h = create_cards('H', cards)
-s = create_cards('S', cards)
-c = create_cards('C', cards)
-
 #create all cards
 all_cards = d + h + s + c
 
