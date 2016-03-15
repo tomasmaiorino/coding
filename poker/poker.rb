@@ -16,6 +16,18 @@ class Poker
 		return c
 	end
 
+	def create_game_using_players(p_players)
+		players = {}
+		if !p_players.nil? && p_players > 0
+			car = []
+			for i in 0..p_players - 1
+				car = create_game(@all_cards, car)
+				players[i] = car			
+			end		
+		end
+		return players
+	end
+
 	def create_game(all_cards, c = [])
 		g = []
 		rand = Random.new
@@ -155,6 +167,20 @@ class Poker
 			}
 		end
 		return all_cards
+	end
+
+	def get_higher_card(cards)
+		h = nil
+		if !cards.nil? && !cards.empty?
+			cards.each_with_index{|val, ind|
+				if val.match(/\d/) != nil
+					h ||= val
+					h = val unless h > val
+				else
+	 #(x & c) == c
+				end
+			}
+		end
 	end
 end
 =begin

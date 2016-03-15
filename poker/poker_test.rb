@@ -1,7 +1,8 @@
-require 'minitest/autorun'
+#require 'minitest/autorun'
+require "test-unit"
 require_relative 'poker'
  
-class PokerTest < Minitest::Test
+class PokerTest < Test::Unit::TestCase
 
 	def setup
 		@cards = ['2','3','4','5','6','7','8','9','10','J','Q','K', 'A']
@@ -43,29 +44,29 @@ class PokerTest < Minitest::Test
 		assert_nil(c)
 	end
 
-	def test_create_cards_should_return_nil_passing_empty_cards()		
+	def test_create_cards_should_return_nil_passing_empty_cards		
 		c = @p.create_cards('D', [])
 		puts c
 		assert_nil(c)
 	end
 
-	def test_create_cards_should_return_nil_passing_nil_cards()		
+	def test_create_cards_should_return_nil_passing_nil_cards
 		c = @p.create_cards('D', nil)
 		puts c
 		assert_nil(c)
 	end	
 
-	def test_create_game_passing_empty_cards()		
+	def test_create_game		
 		c = @p.create_game(@all_cards)
 		assert_equal(5, c.length)
 	end
 
-	def test_create_game_passing_nil_all_cards()		
+	def test_create_game_passing_nil_all_cards		
 		c = @p.create_game(nil)
 		assert_empty(c)
 	end
 
-	def test_create_game_passing_empty_cards()		
+	def test_create_game_passing_empty_cards		
 		all = []
 		c = @p.create_game(all)
 		assert_empty(c)
@@ -363,5 +364,20 @@ class PokerTest < Minitest::Test
 		cards = ['4','5','6','7','8','9','10','J','Q','K', 'A']
 		deck = ['D','H','B']
 		assert_equal((@deck.length * @cards.length),  @p.initialize_all_cards(@cards, @deck).length )
+	end
+
+	def test_create_game_using_players
+		players = @p.create_game_using_players(2)
+		assert_equal(2, players.length)
+		assert_equal(5, players[0].length)
+		assert_equal(5, players[1].length)
+	end
+
+	def test_create_game_using_players_2
+		players = @p.create_game_using_players(3)
+		assert_equal(3, players.length)
+		assert_equal(5, players[0].length)
+		assert_equal(5, players[1].length)
+		assert_equal(5, players[2].length)
 	end	
 end
