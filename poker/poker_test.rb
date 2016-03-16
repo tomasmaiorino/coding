@@ -32,6 +32,60 @@ class PokerTest < Test::Unit::TestCase
 		assert_equal(none, '')
 	end
 
+	def test_get_higher_card
+		cards = ["5D", "3A", "2F", "4D", "6A"]
+		h = @p.get_higher_card(cards)
+		assert_equal(6, h.to_i)
+	end
+
+	def test_get_higher_card_2
+		cards = ["5D", "7A", "8F", "4D", "6A"]
+		h = @p.get_higher_card(cards)
+		assert_equal(8, h.to_i)
+	end
+
+	def test_get_higher_letter_card
+		cards = ["JD", "AA", "AF", "KD", "QA"]
+		h = @p.get_higher_card(cards)
+		assert_equal('AF', h.to_s)
+	end	
+
+	def test_check_only_letters_false
+		cards = ["JD", "AA", "AF", "4D", "QA"]
+		h = @p.check_only_letters(cards)				
+		assert !h
+	end
+
+	def test_check_only_letters
+		cards = ["JD", "AA", "AF", "KD", "QA"]
+		h = @p.check_only_letters(cards)	
+		assert h
+	end
+
+	def test_check_only_numbers
+		cards = ["2D", "3A", "5F", "6D", "QA"]
+		h = @p.check_only_numbers(cards)
+		assert !h
+	end
+
+	def test_check_only_numbers_2
+		cards = ["10D", "3A", "5F", "6D", "7A"]
+		h = @p.check_only_numbers(cards)
+		assert h
+	end
+
+	def test_check_only_numbers_false
+		cards = ["JD", "AA", "AF", "KD", "QA"]
+		h = @p.check_only_numbers(cards)
+		assert !h
+	end
+	
+	def test_check_only_numbers_false_2
+		cards = ["2D", "3A", "5F", "KD", "QA"]
+		h = @p.check_only_numbers(cards)
+		assert !h
+	end	
+
 	def test_create_cards_should_return_nil_passing_nil_card_type()		
 		c = @p.create_cards(nil, @cards)
 		puts c

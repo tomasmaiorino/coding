@@ -172,16 +172,48 @@ class Poker
 	def get_higher_card(cards)
 		h = nil
 		if !cards.nil? && !cards.empty?
-			cards.each_with_index{|val, ind|
-				if val.match(/\d/) != nil
-					h ||= val
-					h = val unless h > val
+			#sort the cards
+			sorted_cards = sort_cards(@cards, cards)
+			#check if is there only card numbers or only card letters
+			h = check_only_numbers(sorted_cards) || check_only_letters(sorted_cards) ? sorted_cards[sorted_cards.length - 1] : nil
+			# return if th
+			return h unless h == nil
+			sorted_cards.each_with_index{|val, ind|
+				new_val = val[0, val.length - 1]
+				if new_val.match(/\d/) != nil					
+					h ||= new_val
+					h = new_val unless h > new_val
 				else
 	 #(x & c) == c
 				end
 			}
 		end
+		return h
 	end
+
+	def check_only_letters(cards)
+		check_only(cards){ |v|
+ 				v.match(/\d/) != nil ? false : true
+ 			}
+	end	
+
+	def check_only_numbers(cards)
+		check_only(cards){ |v|
+ 				v.match(/\d/) == nil ? false : true
+ 		}
+	end	
+	private
+	def check_only(cards)
+		v = nil
+		if !cards.nil? && !cards.empty?
+			v = true
+			cards.each{|h|
+				v = yield(h)
+				break unless v == true
+			}
+		end	
+		return v
+	end		
 end
 =begin
 #create all cards
