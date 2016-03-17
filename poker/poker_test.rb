@@ -20,7 +20,7 @@ class PokerTest < Test::Unit::TestCase
 		assert_equal(13, c.length)
 	end
 
-	def test_create_cards_should_have_all_naipe()		
+	def test_create_cards_should_have_all_suit()		
 		c = @p.create_cards('D', @cards)
 		none = ''
 		c.each{|v|
@@ -33,22 +33,28 @@ class PokerTest < Test::Unit::TestCase
 	end
 
 	def test_get_higher_card
-		cards = ["5D", "3A", "2F", "4D", "6A"]
+		cards = ["JD", "AA", "AF", "4D", "QA"]
 		h = @p.get_higher_card(cards)
-		assert_equal(6, h.to_i)
+		assert_equal('AF', h)
 	end
 
 	def test_get_higher_card_2
-		cards = ["5D", "7A", "8F", "4D", "6A"]
+		cards = ["2D", "KA", "4F", "jD", "QA"]
 		h = @p.get_higher_card(cards)
-		assert_equal(8, h.to_i)
-	end
-
-	def test_get_higher_letter_card
-		cards = ["JD", "AA", "AF", "KD", "QA"]
-		h = @p.get_higher_card(cards)
-		assert_equal('AF', h.to_s)
+		assert_equal('KA', h)
 	end	
+
+	def test_get_higher_card_3
+		cards = ["2D", "3A", "7F", "10D", "9A"]
+		h = @p.get_higher_card(cards)
+		assert_equal('10D', h)
+	end	
+
+	def test_get_higher_card_4
+		cards = ["2A", "4A", "4F", "2D", "JA"]
+		h = @p.get_higher_card(cards)
+		assert_equal('JA', h)
+	end		
 
 	def test_check_only_letters_false
 		cards = ["JD", "AA", "AF", "4D", "QA"]
@@ -228,14 +234,14 @@ class PokerTest < Test::Unit::TestCase
 		assert !@p.check_full_house(cards)
 	end
 
-	def test_check_all_cards_for_same_naipe		
+	def test_check_all_cards_for_same_suit		
 		cards = ["5A", "3A", "4A", "JA", "AA"]
-		assert @p.check_all_cards_for_same_naipe(cards)
+		assert @p.check_all_cards_for_same_suit(cards)
 	end
 
-	def test_check_all_cards_for_same_naipe_false		
+	def test_check_all_cards_for_same_suit_false		
 		cards = ["5A", "3A", "4A", "JA", "AD"]
-		assert !@p.check_all_cards_for_same_naipe(cards)
+		assert !@p.check_all_cards_for_same_suit(cards)
 	end
 
 	def test_check_all_cards_not_in_sequence_2		
@@ -316,22 +322,22 @@ class PokerTest < Test::Unit::TestCase
 		assert s
 	end
 
-	def test_check_all_cards_in_sequence_and_same_naipe		
+	def test_check_all_cards_in_sequence_and_same_suit		
 		cards = ["JA", "9A", "KA", "QA", "10A"]
 		assert @p.check_all_cards_in_sequence(cards)
-		assert @p.check_all_cards_for_same_naipe(cards)
+		assert @p.check_all_cards_for_same_suit(cards)
 	end
 
-	def test_check_all_cards_in_sequence_and_not_same_naipe		
+	def test_check_all_cards_in_sequence_and_not_same_suit		
 		cards = ["JA", "9B", "KA", "QD", "10A"]
 		assert @p.check_all_cards_in_sequence(cards)
-		assert !@p.check_all_cards_for_same_naipe(cards)
+		assert !@p.check_all_cards_for_same_suit(cards)
 	end
 
-	def test_check_all_cards_is_not_sequence_and_is_same_naipe		
+	def test_check_all_cards_is_not_sequence_and_is_same_suit		
 		cards = ["2A", "9A", "KA", "QA", "10A"]
 		assert !@p.check_all_cards_in_sequence(cards)
-		assert @p.check_all_cards_for_same_naipe(cards)
+		assert @p.check_all_cards_for_same_suit(cards)
 	end	
 
 	def test_is_full_house		
@@ -374,27 +380,27 @@ class PokerTest < Test::Unit::TestCase
 		assert !@p.is_straight_flush(cards)
 	end	
 
-	def test_is_not_straight_flush_2		
+	def test_is_not_straight_flush_2
 		cards = ["7A", "3A", "4B", "5A", "6A"]
 		assert !@p.is_straight_flush(cards)
 	end	
 
-	def test_is_royal_flush		
+	def test_is_royal_flush
 		cards = ["10A", "AA", "KA", "QA", "JA"]
 		assert @p.is_royal_flush(cards)
 	end
 
-	def test_is_royal_flush_2		
+	def test_is_royal_flush_2
 		cards = ["10B", "AB", "KB", "QB", "JB"]
 		assert @p.is_royal_flush(cards)
 	end	
 
-	def test_is__not_royal_flush		
+	def test_is__not_royal_flush
 		cards = ["10B", "9B", "KB", "QB", "JB"]
 		assert !@p.is_royal_flush(cards)
 	end		
 
-	def test_is__not_royal_flush_2		
+	def test_is__not_royal_flush_2
 		cards = ["10B", "AZ", "KB", "QB", "JB"]
 		assert !@p.is_royal_flush(cards)
 	end	

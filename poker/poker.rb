@@ -22,7 +22,7 @@ class Poker
 			car = []
 			for i in 0..p_players - 1
 				car = create_game(@all_cards, car)
-				players[i] = car			
+				players[i] = car
 			end		
 		end
 		return players
@@ -65,9 +65,9 @@ class Poker
 	def get_sets(cards, numbers_to_match)
 		n = {}
 		if cards != nil && !cards.empty?
-			cards_without_n = remove_n(cards)			
+			cards_without_n = remove_n(cards)
 			cards_without_n.each_with_index { |val, ind|
-				if cards_without_n.count(val) == numbers_to_match				
+				if cards_without_n.count(val) == numbers_to_match
 					indexes = cards_without_n.size.times.select {|i| cards_without_n[i] == cards_without_n[ind.to_i]}
 					n[val] = indexes
 				end
@@ -98,7 +98,7 @@ class Poker
 		check_three(cards).length == 1 && check_pair(cards).length == 1
 	end
 
-	def check_all_cards_for_same_naipe(cards)
+	def check_all_cards_for_same_suit(cards)
 		v = true
 		cards.each_with_index{|val, ind|
 			cards.each_with_index{|ival, iind|
@@ -150,7 +150,7 @@ class Poker
 	end
 
 	def is_straight_flush(cards)
-		check_all_cards_in_sequence(cards) && check_all_cards_for_same_naipe(cards)
+		check_all_cards_in_sequence(cards) && check_all_cards_for_same_suit(cards)
 	end
 
 	def is_royal_flush(cards)
@@ -162,33 +162,16 @@ class Poker
 		all_cards = []
 		if !cards.nil? && !cards.empty? && !deck.nil?  && !deck.empty?
 			deck.each{ |val|
-				#puts  create_cards(val, cards_without_n)	
 				all_cards.concat create_cards(val, cards)
+				#puts  create_cards(val, cards_without_n)	get_higher_card
 			}
 		end
 		return all_cards
 	end
 
 	def get_higher_card(cards)
-		h = nil
-		if !cards.nil? && !cards.empty?
-			#sort the cards
-			sorted_cards = sort_cards(@cards, cards)
-			#check if is there only card numbers or only card letters
-			h = check_only_numbers(sorted_cards) || check_only_letters(sorted_cards) ? sorted_cards[sorted_cards.length - 1] : nil
-			# return if th
-			return h unless h == nil
-			sorted_cards.each_with_index{|val, ind|
-				new_val = val[0, val.length - 1]
-				if new_val.match(/\d/) != nil					
-					h ||= new_val
-					h = new_val unless h > new_val
-				else
-	 #(x & c) == c
-				end
-			}
-		end
-		return h
+		sorted_cards = sort_cards(@cards, cards)
+		sorted_cards[sorted_cards.length - 1]
 	end
 
 	def check_only_letters(cards)
@@ -213,7 +196,7 @@ class Poker
 			}
 		end	
 		return v
-	end		
+	end
 end
 =begin
 #create all cards
@@ -265,11 +248,11 @@ Um Par: Duas cartas do mesmo valor.
 Dois Pares: Dois pares diferentes.
 Trinca: Três cartas do mesmo valor e duas de valores diferentes.
 Straight (seqüência): Todas as carta com valores consecutivos.
-Flush: Todas as cartas do mesmo naipe.
+Flush: Todas as cartas do mesmo suit.
 Full House: Um trinca e um par.
 Quadra: Quatro cartas do mesmo valor.
-Straight Flush: Todas as cartas são consecutivas e do mesmo naipe.
-Royal Flush: A seqüência 10, Valete, Dama, Rei, Ás, do mesmo naipe.
+Straight Flush: Todas as cartas são consecutivas e do mesmo suit.
+Royal Flush: A seqüência 10, Valete, Dama, Rei, Ás, do mesmo suit.
 As cartas são, em ordem crescente de valor: 2, 3, 4, 5, 6, 7, 8, 9, 10, Valete, Dama, Rei, Ás.
-Os naipes são: Ouro (D), Copa (H), Espadas (S), Paus (C)
+Os suits são: Ouro (D), Copa (H), Espadas (S), Paus (C)
 =end
