@@ -12,6 +12,7 @@ class PlayPoker
 		players.each {|key, value|
   			result[key] = @p.get_points(value)
 		}
+		puts "result #{result}"
 		puts Hash[result.sort_by{|k, v| v}.reverse]
 		return result
 	end

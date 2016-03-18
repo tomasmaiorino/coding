@@ -224,24 +224,24 @@ class PokerTest < Test::Unit::TestCase
 		assert_empty(four)
 	end
 
-	def test_check_full_house		
+	def test_is_full_house		
 		cards = ["5D", "5A", "5F", "AB", "AC"]
-		assert @p.check_full_house(cards)
+		assert @p.is_full_house(cards)
 	end
 
-	def test_check_full_house_not_found		
+	def test_is_full_house_not_found		
 		cards = ["5D", "5A", "5F", "2B", "AC"]
-		assert !@p.check_full_house(cards)
+		assert !@p.is_full_house(cards)
 	end
 
-	def test_check_all_cards_for_same_suit		
+	def test_is_flush		
 		cards = ["5A", "3A", "4A", "JA", "AA"]
-		assert @p.check_all_cards_for_same_suit(cards)
+		assert @p.is_flush(cards)
 	end
 
-	def test_check_all_cards_for_same_suit_false		
+	def test_is_flush_false		
 		cards = ["5A", "3A", "4A", "JA", "AD"]
-		assert !@p.check_all_cards_for_same_suit(cards)
+		assert !@p.is_flush(cards)
 	end
 
 	def test_check_all_cards_not_in_sequence_2		
@@ -325,43 +325,43 @@ class PokerTest < Test::Unit::TestCase
 	def test_check_all_cards_in_sequence_and_same_suit		
 		cards = ["JA", "9A", "KA", "QA", "10A"]
 		assert @p.check_all_cards_in_sequence(cards)
-		assert @p.check_all_cards_for_same_suit(cards)
+		assert @p.is_flush(cards)
 	end
 
 	def test_check_all_cards_in_sequence_and_not_same_suit		
 		cards = ["JA", "9B", "KA", "QD", "10A"]
 		assert @p.check_all_cards_in_sequence(cards)
-		assert !@p.check_all_cards_for_same_suit(cards)
+		assert !@p.is_flush(cards)
 	end
 
 	def test_check_all_cards_is_not_sequence_and_is_same_suit		
 		cards = ["2A", "9A", "KA", "QA", "10A"]
 		assert !@p.check_all_cards_in_sequence(cards)
-		assert @p.check_all_cards_for_same_suit(cards)
+		assert @p.is_flush(cards)
 	end	
 
 	def test_is_full_house		
 		cards = ["2A", "2B", "3A", "2B", "3C"]
-		assert @p.check_full_house(cards)
+		assert @p.is_full_house(cards)
 	end
 
 	def test_is_full_house_2		
 		cards = ["KA", "KB", "3A", "KC", "3C"]
-		assert @p.check_full_house(cards)
+		assert @p.is_full_house(cards)
 	end		
 
 	def test_is_not_full_house		
 		cards = ["2A", "AB", "3A", "2B", "3C"]
-		assert !@p.check_full_house(cards)
+		assert !@p.is_full_house(cards)
 	end	
 
 	def test_is_straight		
-		cards = ["2B", "3A", "4A", "5A", "6A"]
+		cards = ["2B", "3A", "4C", "5B", "6C"]
 		assert @p.is_straight(cards)
 	end
 
 	def test_is_not_straight		
-		cards = ["9B", "3A", "4A", "5A", "6A"]
+		cards = ["9B", "3A", "4C", "5D", "6B"]
 		assert !@p.is_straight(cards)
 	end	
 
@@ -489,9 +489,9 @@ class PokerTest < Test::Unit::TestCase
 			return 10
 		elsif !check_four(cards).empty?
 			return 9
-		elsif check_full_house(cards)
+		elsif is_full_house(cards)
 			return 8
-		elsif check_all_cards_for_same_suit(cards)
+		elsif is_flush(cards)
 			return 7
 		elsif is_straight(cards)
 			return 6

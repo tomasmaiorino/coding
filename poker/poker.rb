@@ -94,11 +94,11 @@ class Poker
 		return get_sets(cards, 4)
 	end
 
-	def check_full_house(cards)
+	def is_full_house(cards)
 		check_three(cards).length == 1 && check_pair(cards).length == 1
 	end
 
-	def check_all_cards_for_same_suit(cards)
+	def is_flush(cards)
 		v = true
 		cards.each_with_index{|val, ind|
 			cards.each_with_index{|ival, iind|
@@ -150,12 +150,16 @@ class Poker
 	end
 
 	def is_straight_flush(cards)
-		check_all_cards_in_sequence(cards) && check_all_cards_for_same_suit(cards)
+		check_all_cards_in_sequence(cards) && is_flush(cards)
 	end
 
 	def is_royal_flush(cards)
 		sorted_cards = sort_cards(@cards, cards)
 		is_straight_flush(cards) && !sorted_cards.empty? && sorted_cards[0][0,2] == '10'
+	end
+
+	def is_four(cards)
+		return !get_sets(cards, 4).empty?
 	end
 
 	def initialize_all_cards(cards, deck)
@@ -186,13 +190,14 @@ class Poker
 	end
 
 	def get_points(cards)
+		puts "cards #{cards}"
 		if is_straight_flush(cards)
 			return 10
-		elsif !check_four(cards).empty?
+		elsif is_four(cards)
 			return 9
-		elsif check_full_house(cards)
+		elsif is_full_house(cards)
 			return 8
-		elsif check_all_cards_for_same_suit(cards)
+		elsif is_flush(cards)
 			return 7
 		elsif is_straight(cards)
 			return 6
