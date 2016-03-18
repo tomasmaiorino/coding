@@ -190,9 +190,9 @@ class PokerTest < Test::Unit::TestCase
 	end
 
 	def test_check_three		
-		cards = ["5D", "5A", "5F", "AD", "3B"]
+		cards = ["10A", "AA", "10B", "QA", "10S"]
 		three = @p.check_three(cards)
-		assert_equal(3, three["5"].length)
+		assert_equal(3, three["10"].length)
 	end
 
 	def test_check_three_not_found		
@@ -440,4 +440,69 @@ class PokerTest < Test::Unit::TestCase
 		assert_equal(5, players[1].length)
 		assert_equal(5, players[2].length)
 	end	
+
+	def test_get_points_3
+		cards = ["10A", "10D", "10C", "QA", "10S"]
+		h = @p.get_points(cards)
+		assert_equal(h, 9)
+	end
+
+	def test_get_points
+		cards = ["10A", "AA", "KA", "QA", "10S"]
+		h = @p.get_points(cards)
+		assert_equal(h, 3)
+	end
+
+	def test_get_points_2
+		cards = ["2A", "3A", "4A", "5A", "6A"]
+		h = @p.get_points(cards)
+		assert_equal(h, 10)
+	end
+
+	def test_get_points_4
+		cards = ["3C", "3A", "4A", "4C", "6A"]
+		h = @p.get_points(cards)
+		assert_equal(h, 4)
+	end
+
+	def test_get_points_5
+		cards = ["2B", "3A", "4A", "5A", "6A"]
+		h = @p.get_points(cards)
+		assert_equal(h, 6)
+	end
+			
+	def test_get_points_6
+		cards = ["5D", "5A", "5F", "AB", "AC"]
+		h = @p.get_points(cards)
+		assert_equal(h, 8)
+	end
+
+	def test_get_points_7
+		cards = ["5D", "5A", "5F", "9B", "8C"]
+		h = @p.get_points(cards)
+		assert_equal(h, 5)
+	end
+
+=begin		
+
+		if is_straight(cards)
+			return 10
+		elsif !check_four(cards).empty?
+			return 9
+		elsif check_full_house(cards)
+			return 8
+		elsif check_all_cards_for_same_suit(cards)
+			return 7
+		elsif is_straight(cards)
+			return 6
+		elsif check_three(cards)
+			return 5
+		elsif check_pair(cards).length == 2
+			return 4
+		elsif check_pair(cards).length == 1
+			return 3
+		end
+	end
+=end
+
 end

@@ -23,7 +23,7 @@ class Poker
 			for i in 0..p_players - 1
 				car = create_game(@all_cards, car)
 				players[i] = car
-			end		
+			end
 		end
 		return players
 	end
@@ -51,12 +51,12 @@ class Poker
 		  		to_order.each_with_index do |val, ind|
 		  			if model[index.to_i] == to_order[ind][0, to_order[ind].length - 1]
 			  				n << to_order[ind]
-		  			end	
+		  			end
 		  		end
 		  	end
 		  end
 	  	return n
-	end	
+	end
 
 	def check_pair(cards)
 		return get_sets(cards, 2)
@@ -79,7 +79,7 @@ class Poker
 	def remove_n(cards)
 		n = []
 		if cards != nil && !cards.empty?
-			cards.each {|v| 
+			cards.each {|v|
 				n << v[0, v.length - 1]
 			}
 		end
@@ -120,7 +120,7 @@ class Poker
 				# check if this is the last one
 				if ind < cards_without_n.length - 1
 					# check if the actual card is a 10
-					if val.to_i == 10 
+					if val.to_i == 10
 						if cards_without_n[ind + 1] != "J"
 							s = false
 						end
@@ -133,7 +133,7 @@ class Poker
 					if val == 'J' && cards_without_n[ind + 1]  != 'Q' || val == 'Q' && cards_without_n[ind + 1] != 'K' ||  val == 'K' && cards_without_n[ind + 1] != 'A'
 						s = false
 					end
-				end	
+				end
 			end
 		}
 		return s
@@ -163,7 +163,6 @@ class Poker
 		if !cards.nil? && !cards.empty? && !deck.nil?  && !deck.empty?
 			deck.each{ |val|
 				all_cards.concat create_cards(val, cards)
-				#puts  create_cards(val, cards_without_n)	get_higher_card
 			}
 		end
 		return all_cards
@@ -178,13 +177,34 @@ class Poker
 		check_only(cards){ |v|
  				v.match(/\d/) != nil ? false : true
  			}
-	end	
+	end
 
 	def check_only_numbers(cards)
 		check_only(cards){ |v|
  				v.match(/\d/) == nil ? false : true
  		}
-	end	
+	end
+
+	def get_points(cards)
+		if is_straight_flush(cards)
+			return 10
+		elsif !check_four(cards).empty?
+			return 9
+		elsif check_full_house(cards)
+			return 8
+		elsif check_all_cards_for_same_suit(cards)
+			return 7
+		elsif is_straight(cards)
+			return 6
+		elsif check_three(cards).length == 1
+			return 5
+		elsif check_pair(cards).length == 2
+			return 4
+		elsif check_pair(cards).length == 1
+			return 3
+		end
+	end
+
 	private
 	def check_only(cards)
 		v = nil
@@ -194,55 +214,53 @@ class Poker
 				v = yield(h)
 				break unless v == true
 			}
-		end	
+		end
 		return v
 	end
 end
 =begin
-#create all cards
-all_cards = d + h + s + c
+10 - Straight Flush: Cinco cartas em seqüência, do mesmo naipe.
+Obs: O melhor straight flush possível é conhecido como Royal Flush, que consiste
+ em ás, rei, dama, valete e dez de um único naipe.
 
-#get player_one cards
-player_one = create_game(all_cards)
-#get player_two cards
-player_two = create_game(all_cards, player_one)
-#get player_tree cards
-player_tree = create_game(all_cards, player_one + player_two)
-#get player_four cards
-player_four = create_game(all_cards, player_one + player_two + player_tree)
+09 - Quadra: Quatro cartas de valor idêntico e uma carta lateral.
+Obs: Na eventualidade de um empate: A quadra mais alta ganha. Nos jogos com cartas comunitárias,
+em que os jogadores têm a mesma quadra, a quinta carta lateral mais alta (a "kicker") ganha.
 
-puts "player_one #{player_one}"
-puts "player_two #{player_two}"
-puts "player_tree #{player_tree}"
-puts "player_four #{player_four}"
+08 - Full House: Três cartas de valor idêntico (trinca) e duas cartas de valor diferente e compatível.
+Obs: Na eventualidade de um empate: A trinca mais alta ganha o pote. Nos jogos de cartas de comunidade
+ em que os jogadores têm a mesma trinca, o valor mais alto de um par ganha.
 
-puts "UnOrdered player_two #{player_one}"
-player_one = sort_cards(cards, player_one)
-puts "Ordered player_one #{player_one}"
+07 - Flush (Cor): Cinco cartas do mesmo naipe.
+Obs: Na eventualidade de um empate: Ganha o jogador com a carta com maior valor.
+Se necessário, a segunda, terceira, quarta e quinta cartas mais altas podem ser utilizadas para resolver o empate.
 
-puts "UnOrdered player_two #{player_two}"
-player_two = sort_cards(cards, player_two)
-puts "Ordered player_two #{player_two}"
+06 - Straight (Seqüencia): Cinco cartas em seqüência.
+Obs: Na eventualidade de um empate: A carta com valor mais alto no topo da seqüência ganha.
+Nota: O Ás pode ser utilizado na parte superior ou inferior da seqüência e é a única carta que pode agir desta forma
 
-puts "UnOrdered player_two #{player_tree}"
-player_tree = sort_cards(cards, player_tree)
-puts "Ordered player_two #{player_tree}"
+05 - Trinca: Três cartas de valor idêntico e duas cartas laterais não relacionadas.
+Obs: Na eventualidade de um empate: A trinca mais alta ganha. Nos jogos com cartas comunitárias,
+ em que os jogadores têm a mesma trinca, a carta lateral mais alta ou, se necessário, a segunda carta mais alta ganha.
 
-puts "UnOrdered player_two #{player_four}"
-player_four = sort_cards(cards, player_four)
-puts "Ordered player_two #{player_four}"
+04 - Dois pares: Duas cartas de valor idêntico, outras duas cartas de outro valor idêntico
+entre si (mas diferente do valor das duas primeiras cartas) e uma carta lateral
+Obs: Na eventualidade de um empate: O par mais alto ganha. Se os jogadores tiverem um par de idêntico valor,
+o segundo par mais alto ganha. Se ambos os jogadores tiverem pares idênticos, a carta lateral mais alta ganha.
 
-one = check_pair(player_one)
-puts "One has pair: #{one.length > 0}"
-puts "One has two pairs: #{one.length == 2}"
+03 - Um par: Duas cartas de valor idêntico e três cartas laterais não relacionadas.
+Obs: Na eventualidade de um empate: O par mais alto ganha. Se os jogadores possuírem o mesmo par, a carta lateral mais alta ganha e,
+se necessário, a segunda e terceira cartas mais altas podem ser utilizadas para resolver o empate.
 
-one = check_three(player_one)
+02 - Carta alta: Qualquer mão que não se qualifique numa categoria listada acima.
+Obs: Na eventualidade de um empate: A carta mais alta ganha e, se necessário, a segunda,
+terceira e quarta mais altas e a carta mais baixa podem ser utilizadas para resolver o empate.
 
-#winner = gets_winner(player_one, player_two, player_tree, player_four)
-=end
 
-#puts "The winner is #{winner}"
-=begin
+
+
+
+
 Carta Alta: A carta de maior valor.
 Um Par: Duas cartas do mesmo valor.
 Dois Pares: Dois pares diferentes.

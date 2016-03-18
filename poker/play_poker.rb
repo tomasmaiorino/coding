@@ -1,7 +1,23 @@
+require_relative 'poker'
 class PlayPoker
+	attr_accessor :p
 
 	def initialize
-		p = Poker.new
+		@p = Poker.new
+	end
+
+	def play(players)
+		#
+		result = {}
+		players.each {|key, value|
+  			result[key] = @p.get_points(value)
+		}
+		puts Hash[result.sort_by{|k, v| v}.reverse]
+		return result
+	end
+
+	def create_game_using_players(players)
+		return @p.create_game_using_players(players)
 	end
 
 end
