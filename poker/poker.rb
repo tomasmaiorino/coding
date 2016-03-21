@@ -207,6 +207,8 @@ class Poker
 			return 4
 		elsif check_pair(cards).length == 1
 			return 3
+		else
+			return 2
 		end
 	end
 
@@ -260,22 +262,4 @@ se necessário, a segunda e terceira cartas mais altas podem ser utilizadas para
 02 - Carta alta: Qualquer mão que não se qualifique numa categoria listada acima.
 Obs: Na eventualidade de um empate: A carta mais alta ganha e, se necessário, a segunda,
 terceira e quarta mais altas e a carta mais baixa podem ser utilizadas para resolver o empate.
-
-
-
-
-
-
-Carta Alta: A carta de maior valor.
-Um Par: Duas cartas do mesmo valor.
-Dois Pares: Dois pares diferentes.
-Trinca: Três cartas do mesmo valor e duas de valores diferentes.
-Straight (seqüência): Todas as carta com valores consecutivos.
-Flush: Todas as cartas do mesmo suit.
-Full House: Um trinca e um par.
-Quadra: Quatro cartas do mesmo valor.
-Straight Flush: Todas as cartas são consecutivas e do mesmo suit.
-Royal Flush: A seqüência 10, Valete, Dama, Rei, Ás, do mesmo suit.
-As cartas são, em ordem crescente de valor: 2, 3, 4, 5, 6, 7, 8, 9, 10, Valete, Dama, Rei, Ás.
-Os suits são: Ouro (D), Copa (H), Espadas (S), Paus (C)
 =end

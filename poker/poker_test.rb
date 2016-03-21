@@ -482,27 +482,4 @@ class PokerTest < Test::Unit::TestCase
 		h = @p.get_points(cards)
 		assert_equal(h, 5)
 	end
-
-=begin		
-
-		if is_straight(cards)
-			return 10
-		elsif !check_four(cards).empty?
-			return 9
-		elsif is_full_house(cards)
-			return 8
-		elsif is_flush(cards)
-			return 7
-		elsif is_straight(cards)
-			return 6
-		elsif check_three(cards)
-			return 5
-		elsif check_pair(cards).length == 2
-			return 4
-		elsif check_pair(cards).length == 1
-			return 3
-		end
-	end
-=end
-
 end
