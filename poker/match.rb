@@ -9,7 +9,7 @@ class Match
 	def initialize(players_number = 0, players = [])
 		@play_poker = PlayPoker.new
 		load_game(players_number, players)
-  end
+  	end
 
 	def get_players_cards
 		cards = []
@@ -20,7 +20,10 @@ class Match
 	end
 
 	def play
-		#return PlayerPoker.new.
+		@players = @play_poker.play(@players)
+		#puts "players #{@players}"
+		#puts "Hash[@players.sort_by #{Hash[@players.sort_by{|k, v| v.points}.reverse]}"	
+		return Hash[@players.sort_by{|k, v| v.points}.reverse]
 	end
 
 	def load_game(players_number, players)
@@ -44,13 +47,36 @@ class Match
 		end
 		return players
 	end
-end
 
+	def is_a_tie(players)
+		points = {}
+		players.each {|key, value|
+			if points.has_key?(value.points)
+				points[value.points] = points[value.points] + 1
+			elsif
+				points[value.points] = 1
+			end
+		}
+		return false if points.size == players.size
+		puts "points #{points}"
+
+		# get higher point and check if there is more than one player with this point
+		points = Hash[points.sort]
+		if points[points.keys.first] == 1
+			return false
+		end
+	end
+end
+=begin
 print 'Type the numbers of the players: '
 players_number = gets.to_i
 while players_number > 4
 	print 'We can choose only four players. If want to stop, type 0: '
 	players_number = gets.to_i
+	if players_number == 0
+	  abort("Bye !! Thanks for play :)")
+	end
 end
 m = Match.new(players_number, [])
 puts "get_players_cards #{m.get_players_cards}"
+=end

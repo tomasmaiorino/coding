@@ -17,7 +17,7 @@ class PlayPoker
 
 	def get_winner(players)
 		result = play(players)
-		puts "result #{result}"
+		#puts "result #{result}"
 		return players[result.keys.first]
 	end
 
