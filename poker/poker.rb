@@ -16,14 +16,14 @@ class Poker
 		return c
 	end
 
-	def create_game_using_players(p_players)
-		players = {}
-		if !p_players.nil? && p_players > 0
+	def create_game_using_players(players)
+		#players = {}
+		if !players.nil? && players.length > 0
 			car = []
-			for i in 0..p_players - 1
+			players.each_with_index {|item, index|
 				car = create_game(@all_cards, car)
-				players[i] = car
-			end
+				players[index].cards = car
+			}
 		end
 		return players
 	end

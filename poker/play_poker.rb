@@ -1,5 +1,6 @@
 require_relative 'poker'
 class PlayPoker
+	
 	attr_accessor :p
 
 	def initialize
@@ -34,10 +35,10 @@ class PlayPoker
 	def is_a_tie(results)
 		count = 0
 		temp_list = {}
-		results.each {|key, value| 
+		results.each {|key, value|
 			if temp_list.has_key?[valeu]
 				temp_list[valeu] = temp_list[value] + 1
-			elsif 
+			elsif
 				temp_list[value] = 1
 			end
 		}
@@ -46,7 +47,7 @@ class PlayPoker
 		end
 		#puts "temp_list #{temp_list}"
 		#return count
-	end	
+	end
 
 end
 
