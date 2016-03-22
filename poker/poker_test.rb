@@ -428,11 +428,7 @@ class PokerTest < Test::Unit::TestCase
 	end
 
 	def test_create_game_using_players
-    players = []
-    player_one = Player.new([], 1)
-    player_two = Player.new([], 2)
-    players << player_one
-    players << player_two
+    players = [Player.new([], 1), Player.new([], 2)]
 		players = @p.create_game_using_players(players)
 		assert_equal(2, players.length)
 		assert_equal(5, players[0].cards.length)
@@ -444,13 +440,7 @@ class PokerTest < Test::Unit::TestCase
 
 	def test_create_game_using_players_2
     players = []
-    player_one = Player.new([], 1)
-    player_two = Player.new([], 2)
-    player_three = Player.new([], 3)
-    players << player_one
-    players << player_two
-    players << player_three
-
+		players = [Player.new([], 1), Player.new([], 2), Player.new([], 3)]
 		players = @p.create_game_using_players(players)
     assert_equal(3, players.length)
 		assert_equal(5, players[0].cards.length)

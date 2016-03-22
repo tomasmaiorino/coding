@@ -8,12 +8,11 @@ class PlayPoker
 	end
 
 	def play(players)
-		#
-		result = {}
 		players.each {|key, value|
-  			result[key] = value.points = @p.get_points(value.cards)
+  			value.points = @p.get_points(value.cards)
 		}
-		return Hash[result.sort_by{|k, v| v}.reverse]
+		#return Hash[result.sort_by{|k, v| v}.reverse]
+		return players
 	end
 
 	def get_winner(players)

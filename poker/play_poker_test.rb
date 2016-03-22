@@ -1,4 +1,6 @@
 require_relative 'play_poker'
+require_relative 'player'
+require_relative 'match'
 require "test-unit"
 
 class PlayPokerTest < Test::Unit::TestCase
@@ -7,11 +9,12 @@ class PlayPokerTest < Test::Unit::TestCase
 	end
 
 	def test_initialize_game
-		players = @pp.create_game_using_players(2)
+		players = [Player.new([], 1), Player.new([], 2)]
+		players = @pp.create_game_using_players(players)
 		assert_equal(2, players.length)
-		assert_equal(5, players[0].length)
-		assert_equal(5, players[1].length)
-		assert_not_same(players[0], players[1])
+		assert_equal(5, players[0].cards.length)
+		assert_equal(5, players[1].cards.length)
+		assert_not_same(players[0].cards, players[1].cards)
 	end
 
   def test_play
@@ -19,12 +22,12 @@ class PlayPokerTest < Test::Unit::TestCase
     card_1 = ['AH', 'AD', 'KS', 'KS', 'QS']
     card_2 = ["2D", "2A", "AF", "KD", "QA"]
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
+		players = [Player.new(card_1, 1), Player.new(card_2, 2)]
+		m = Match.new(players)
 
-    result = @pp.play(players)
-    assert_equal(4, result[0])
+    result = @pp.play(m.players)
+    assert_equal(4, result[1].points)
+		assert_equal(3, result[2].points)
   end
 
   def test_play_2
@@ -32,12 +35,12 @@ class PlayPokerTest < Test::Unit::TestCase
     card_2 = ['AC', 'KH', 'KC', 'KS', 'KD']
     card_1 = ["2D", "2A", "2H", "KD", "QA"]
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
+		players = [Player.new(card_1, 1), Player.new(card_2, 2)]
+		m = Match.new(players)
 
-    result = @pp.play(players)
-    assert_equal(9, result[1])
+    result = @pp.play(m.players)
+    assert_equal(9, result[2].points)
+		assert_equal(5, result[1].points)
   end
 
 def test_play_3
@@ -47,13 +50,13 @@ def test_play_3
     card_2 = ['AC', 'KH', 'KC', 'KS', 'KD']
     card_3 = ['10C', 'JH', 'QC', 'KS', 'AD']
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
+		players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
 
-    result = @pp.play(players)
-    assert_equal(9, result[1])
+    result = @pp.play(m.players)
+    assert_equal(9, result[2].points)
+		assert_equal(5, result[1].points)
+		assert_equal(6, result[3].points)
   end
 
  def test_play_4
@@ -62,13 +65,11 @@ def test_play_3
     card_2 = ['10C', 'KH', 'AC', '2S', '6D']
     card_3 = ['2C', '6H', '3C', '10S', '5D']
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
+		players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
 
-    result = @pp.play(players)
-    assert_equal(3, result[0])
+    result = @pp.play(m.players)
+    assert_equal(3, result[1].points)
   end
 
   def test_play_5
@@ -76,14 +77,13 @@ def test_play_3
     card_2 = ['10C', '10H', '10B', '10A', '6D']
     card_3 = ['2C', '6H', '3C', '10S', '5D']
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
+		players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
 
-    result = @pp.play(players)
-    assert_equal(1, result.keys.first)
-    assert_equal(9, result[result.keys.first])
+    result = @pp.play(m.players)
+    assert_equal(9, result[2].points)
+		assert_equal(5, result[1].points)
+		assert_equal(2, result[3].points)
   end
 
    def test_play_6
@@ -91,42 +91,35 @@ def test_play_3
     card_2 = ['10C', '10H', '10B', '10A', '6D']
     card_3 = ['8D', '9D', '10D', 'JD', 'QD']
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
+		players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
 
-    result = @pp.play(players)
-    assert_equal(2, result.keys.first)
-    assert_equal(10, result[result.keys.first])
+    result = @pp.play(m.players)
+    assert_equal(5, result[1].points)
+    assert_equal(9, result[2].points)
+		assert_equal(10, result[3].points)
   end
 
   def test_play_7
     card_1 = ["2D", "2A", "3H", "KD", "QA"]
     card_2 = ['9C', '4H', '2B', '4A', 'QD']
     card_3 = ['2C', '6H', '3C', '10S', '5D']
+    players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
+    result = @pp.play(m.players)
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
-
-    result = @pp.play(players)
-    assert_equal(0, result.keys.first)
-    assert_equal(3, result[result.keys.first])
+    assert_equal(3, result[1].points)
+    assert_equal(3, result[2].points)
+		assert_equal(2, result[3].points)
   end
 
   def test_get_winner
-  	 card_1 = ["2D", "2A", "3H", "KD", "QA"]
+  	card_1 = ["2D", "2A", "3H", "KD", "QA"]
     card_2 = ['9C', '4H', '2B', '4A', 'QD']
     card_3 = ['2C', '6H', '3C', '10S', '5D']
-
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
-
-    winner = @pp.get_winner(players)
+		players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
+    winner = @pp.get_winner(m.players)
     assert_equal(card_1, winner)
 
   end
@@ -136,12 +129,10 @@ def test_play_3
     card_2 = ['10C', '10H', '10B', '10A', '6D']
     card_3 = ['8D', '9D', '10D', 'JD', 'QD']
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
+		players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
 
-    winner = @pp.get_winner(players)
+    winner = @pp.get_winner(m.players)
     assert_equal(card_3, winner)
   end
 
@@ -164,10 +155,8 @@ def test_play_3
     card_2 = ['10C', '10H', 'JB', 'JA', '6D']
     card_3 = ['8D', '9D', '10D', '3D', 'QD']
 
-    players = {}
-    players[0] = card_1
-    players[1] = card_2
-    players[2] = card_3
+		players = [Player.new(card_1, 1), Player.new(card_2, 2), Player.new(card_3, 3)]
+		m = Match.new(players)
 
     winner = @pp.get_winner(players)
     assert_equal(card_3, winner)
