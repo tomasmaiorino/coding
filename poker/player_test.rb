@@ -17,6 +17,6 @@ class PlayerTest < Test::Unit::TestCase
 	def test_playes_initialize_2
 		player = Player.new([], 1)
 		assert_equal(player.id, 1)
-		assert_equal(player.cards.length, 1)
+		assert_equal(player.cards.length, 0)
 	end
 end

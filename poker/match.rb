@@ -22,7 +22,7 @@ class Match
 	def play
 		@players = @play_poker.play(@players)
 		#puts "players #{@players}"
-		#puts "Hash[@players.sort_by #{Hash[@players.sort_by{|k, v| v.points}.reverse]}"	
+		#puts "Hash[@players.sort_by #{Hash[@players.sort_by{|k, v| v.points}.reverse]}"
 		return Hash[@players.sort_by{|k, v| v.points}.reverse]
 	end
 
@@ -45,6 +45,7 @@ class Match
 		else
 			@players = {}
 		end
+		print "Players: #{players.size}\n"
 		return players
 	end
 
@@ -66,6 +67,33 @@ class Match
 			return false
 		end
 	end
+
+	def get_players_by_point(point)
+		players = []
+		@players.each{|key, value|
+			players << value if value.points == point
+		}
+		return players
+	end
+
+	def get_higher_player(players)
+		points = players[0].points
+		if points == ConstClass::A_PAIR
+			h = nil
+			players.each{|player|
+				pair = @play_poker.p.check_pair(player.cards)
+				cards = {}
+				pair.each{|key, value|
+					value.each{|i|
+					player.points_cards << player.cards[i]	
+					}
+				}
+			}
+		elsif points == ConstClass::A_PAIR
+
+		end
+	end
+
 end
 =begin
 print 'Type the numbers of the players: '

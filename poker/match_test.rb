@@ -1,4 +1,3 @@
-#require 'minitest/autorun'
 require_relative 'match'
 require_relative 'player'
 require "test-unit"
@@ -39,10 +38,10 @@ class MatchTest < Test::Unit::TestCase
 	def test_play
 		m = Match.new(0, @players)
 		players = m.play
-		assert_equal(players[players.keys.first].points, 4)
+		assert_equal(players[players.keys.first].points, ConstClass::TWO_PAIRS)
 	end
 
-	def test_is_a_tie_false		
+	def test_is_a_tie_false
 		m = Match.new(0, @players)
 		players = m.play
 		assert !m.is_a_tie(players)
@@ -53,6 +52,30 @@ class MatchTest < Test::Unit::TestCase
 		m = Match.new(0, @players)
 		players = m.play
 		assert !m.is_a_tie(players)
-	end	
+	end
 
+	def test_get_players_by_point
+		m = Match.new(0, @players)
+		players = m.play
+		#4
+		temp_players = m.get_players_by_point(ConstClass::TWO_PAIRS)
+		assert temp_players.length == 1
+		assert_equal(temp_players[0].cards, @card_1)
+		assert_equal(temp_players[0].points, ConstClass::TWO_PAIRS)
+
+		temp_players = m.get_players_by_point(ConstClass::A_PAIR)
+		assert_equal(temp_players[0].cards, @card_2)
+		assert_equal(temp_players[0].points, ConstClass::A_PAIR)
+	end
+
+	def test_get_players_by_point_with_tie_cards
+		@players << Player.new(["4D", "4A", "JF", "5D", "QA"], 3)
+		m = Match.new(0, @players)
+		players = m.play
+		#4
+		temp_players = m.get_players_by_point(ConstClass::A_PAIR)
+		assert temp_players.length == 2
+		assert_equal(temp_players[0].cards, @card_2)
+		assert_equal(temp_players[0].points, ConstClass::A_PAIR)
+	end
 end

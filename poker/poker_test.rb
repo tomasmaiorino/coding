@@ -162,6 +162,7 @@ class PokerTest < Test::Unit::TestCase
 	def test_check_pair
 		cards = ["5D", "AA", "5F", "4D", "3B"]
 		pair = @p.check_pair(cards)
+		puts "pair #{pair}"
 		assert_equal(2, pair["5"].length)
 	end
 
@@ -451,45 +452,62 @@ class PokerTest < Test::Unit::TestCase
     assert_not_equal(players[1].cards, players[0].cards, players[2].cards)
 	end
 
-	def test_get_points_3
+	def test_get_points_quadra
 		cards = ["10A", "10D", "10C", "QA", "10S"]
-		h = @p.get_points(cards)
-		assert_equal(h, 9)
+		player = Player.new(cards, 1)
+		h = @p.get_points(player)
+		assert_equal(h.points, ConstClass::QUADRA)
 	end
 
-	def test_get_points
+	def test_get_points_a_pair
 		cards = ["10A", "AA", "KA", "QA", "10S"]
-		h = @p.get_points(cards)
-		assert_equal(h, 3)
+		player = Player.new(cards, 1)
+		h = @p.get_points(player)
+		assert_equal(h.points, ConstClass::A_PAIR)
 	end
 
-	def test_get_points_2
+	def test_get_points_straight_flush
 		cards = ["2A", "3A", "4A", "5A", "6A"]
-		h = @p.get_points(cards)
-		assert_equal(h, 10)
+		player = Player.new(cards, 1)
+		h = @p.get_points(player)
+		assert_equal(h.points, ConstClass::STRAIGHT_FLUSH)
 	end
 
-	def test_get_points_4
+	def test_get_points_two_pairs
 		cards = ["3C", "3A", "4A", "4C", "6A"]
-		h = @p.get_points(cards)
-		assert_equal(h, 4)
+		player = Player.new(cards, 1)
+		h = @p.get_points(player)
+		assert_equal(h.points, ConstClass::TWO_PAIRS)
 	end
 
-	def test_get_points_5
+	def test_get_points_straight
 		cards = ["2B", "3A", "4A", "5A", "6A"]
-		h = @p.get_points(cards)
-		assert_equal(h, 6)
+		player = Player.new(cards, 1)
+		h = @p.get_points(player)
+		assert_equal(h.points, ConstClass::STRAIGHT)
 	end
 
-	def test_get_points_6
+	def test_get_points_full_house
 		cards = ["5D", "5A", "5F", "AB", "AC"]
-		h = @p.get_points(cards)
-		assert_equal(h, 8)
+		player = Player.new(cards, 1)
+		h = @p.get_points(player)
+		assert_equal(h.points, ConstClass::FULL_HOUSE)
 	end
 
-	def test_get_points_7
+	def test_get_points_trinca
 		cards = ["5D", "5A", "5F", "9B", "8C"]
-		h = @p.get_points(cards)
-		assert_equal(h, 5)
+		player = Player.new(cards, 1)
+		h = @p.get_points(player)
+		assert_equal(h.points, ConstClass::TRINCA)
 	end
+
+	def test_get_cards_from_points
+		cards = ["5D", "5A", "9B", "5F", "8C"]
+		player = Player.new(cards, 1)
+		points = {5 => [0,1,3]}
+		player = @p.get_cards_from_points(player, points)
+
+		assert_equal(player.points_cards, [player.cards[0], player.cards[1], player.cards[3]])
+	end
+
 end

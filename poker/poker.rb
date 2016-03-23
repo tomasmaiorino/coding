@@ -1,3 +1,5 @@
+require_relative 'const_class'
+
 class Poker
 
 	def initialize
@@ -189,27 +191,37 @@ class Poker
  		}
 	end
 
-	def get_points(cards)
-		puts "cards #{cards}"
-		if is_straight_flush(cards)
-			return 10
-		elsif is_four(cards)
-			return 9
-		elsif is_full_house(cards)
-			return 8
-		elsif is_flush(cards)
-			return 7
-		elsif is_straight(cards)
-			return 6
-		elsif check_three(cards).length == 1
-			return 5
-		elsif check_pair(cards).length == 2
-			return 4
-		elsif check_pair(cards).length == 1
-			return 3
+	def get_points(player)
+		puts "cards #{player.cards}"
+		if is_straight_flush(player.cards)
+			player.points = ConstClass::STRAIGHT_FLUSH
+		elsif is_four(player.cards)
+			player.points = ConstClass::QUADRA
+		elsif is_full_house(player.cards)
+			player.points = ConstClass::FULL_HOUSE
+		elsif is_flush(player.cards)
+			player.points = ConstClass::FLUSH
+		elsif is_straight(player.cards)
+			player.points = ConstClass::STRAIGHT
+		elsif check_three(player.cards).length == 1
+			player.points = ConstClass::TRINCA
+		elsif check_pair(player.cards).length == 2
+			player.points = ConstClass::TWO_PAIRS
+		elsif check_pair(player.cards).length == 1
+			player.points = ConstClass::A_PAIR
 		else
-			return 2
+			player.points = ConstClass::HIGHER_CARD
 		end
+		return player
+	end
+
+	def get_cards_from_points(player, points)
+			points.each{|key, value|
+				value.each{|i|
+					player.points_cards << player.cards[i]
+				}
+			}
+			return player
 	end
 
 	private

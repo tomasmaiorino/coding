@@ -9,7 +9,7 @@ class PlayPoker
 
 	def play(players)
 		players.each {|key, value|
-  			value.points = @p.get_points(value.cards)
+  			value = @p.get_points(value)
 		}
 		#return Hash[result.sort_by{|k, v| v}.reverse]
 		return players
@@ -35,8 +35,8 @@ class PlayPoker
 		count = 0
 		temp_list = {}
 		results.each {|key, value|
-			if temp_list.has_key?[valeu]
-				temp_list[valeu] = temp_list[value] + 1
+			if temp_list.has_key?(value)
+				temp_list[value] = temp_list[value] + 1
 			elsif
 				temp_list[value] = 1
 			end
