@@ -46,6 +46,9 @@ class Match
 			@players = {}
 		end
 		print "Players: #{players.size}\n"
+		players.each{|v|
+			print v.to_s
+		}
 		return players
 	end
 
@@ -77,23 +80,68 @@ class Match
 	end
 
 	def get_higher_player(players)
+		player = nil
 		points = players[0].points
 		if points == ConstClass::A_PAIR
 			h = nil
-			players.each{|player|
-				pair = @play_poker.p.check_pair(player.cards)
-				cards = {}
-				pair.each{|key, value|
-					value.each{|i|
-					player.points_cards << player.cards[i]	
-					}
-				}
-			}
+			player = get_higher_pair(players)
 		elsif points == ConstClass::A_PAIR
 
 		end
 	end
 
+	def print_players
+ 		@players.each{|key, value| puts value.to_s}
+	end
+	def get_higher_pair(players)
+		return get_higher_group(players){|v| @play_poker.p.check_pair(v.cards)}
+	end
+
+	def get_higher_three(players)
+		return get_higher_group(players){|v| @play_poker.p.check_three(v.cards)}
+	end
+
+	def get_higher_four(players)
+		return get_higher_group(players){|v| @play_poker.p.check_four(v.cards)}
+	end
+
+	def get_higher_full_house(players)
+		return get_higher_group(players){|v| @play_poker.p.check_three(v.cards)}
+	end
+
+	def get_higher_group(players)
+		#configure players pairs data
+		cards_fits = []
+		players.each{|player|
+			player.points_cards = yield(player)#@play_poker.p.check_pair(player.cards)
+			cards_fits.concat(player.get_cards_fit(player.points_cards))
+		}
+#		puts "cards_fits #{cards_fits}"
+		player_temp = []
+		h = @play_poker.p.get_higher_card(cards_fits)
+		return [get_player_by_card(players, h)]
+	end
+
+	def get_higher_is_straight_flush(players)
+		cards = []
+		players.each{|v|
+			cards.concat(v.cards)
+		}
+		higher = @play_poker.p.get_higher_card(cards)
+		return [get_player_by_card(players, higher)]
+	end
+
+	def get_player_by_card(players, card)
+		if players.kind_of?(Array)
+			players.each{|value|
+				return value if value.cards.include?(card)
+			}
+		else
+			players.each{|key, value|
+				return value if value.cards.include?(card)
+			}
+		end
+	end
 end
 =begin
 print 'Type the numbers of the players: '
@@ -106,5 +154,12 @@ while players_number > 4
 	end
 end
 m = Match.new(players_number, [])
+result = m.play
+puts "result #{result}"
+if m.is_a_tie(result)
+
+else
+	print "The winner is player #{result[0].id}: #{result[0].to_s} "
+end
 puts "get_players_cards #{m.get_players_cards}"
 =end

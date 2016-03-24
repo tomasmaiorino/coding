@@ -42,10 +42,12 @@ class PlayPoker
 			end
 		}
 		if results.size == temp_list.size
-			return true
+			return false
 		end
-		#puts "temp_list #{temp_list}"
-		#return count
+		if Hash[temp_list.sort][temp_list.keys.first] == 1
+			return false
+		end
+		true
 	end
 
 end

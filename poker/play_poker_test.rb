@@ -163,8 +163,8 @@ def test_play_3
   end
 =end
   def test_is_a_tie
-  	results = {'2'=> 7, '1'=> 7, '0'=>3}
+  	results = {'2'=> 7, '3'=> 7, '0'=>3}
   	ret = @pp.is_a_tie(results)
-		assert_equal(2, ret.size)
+		assert ret
   end
 end

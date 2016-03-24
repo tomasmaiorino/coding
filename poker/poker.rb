@@ -192,7 +192,7 @@ class Poker
 	end
 
 	def get_points(player)
-		puts "cards #{player.cards}"
+		#puts "cards #{player.cards}"
 		if is_straight_flush(player.cards)
 			player.points = ConstClass::STRAIGHT_FLUSH
 		elsif is_four(player.cards)
@@ -213,15 +213,6 @@ class Poker
 			player.points = ConstClass::HIGHER_CARD
 		end
 		return player
-	end
-
-	def get_cards_from_points(player, points)
-			points.each{|key, value|
-				value.each{|i|
-					player.points_cards << player.cards[i]
-				}
-			}
-			return player
 	end
 
 	private
