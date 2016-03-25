@@ -195,22 +195,31 @@ class Poker
 		#puts "cards #{player.cards}"
 		if is_straight_flush(player.cards)
 			player.points = ConstClass::STRAIGHT_FLUSH
+			player.game_name = "STRAIGHT_FLUSH"
 		elsif is_four(player.cards)
 			player.points = ConstClass::QUADRA
+			player.game_name = "QUADRA"
 		elsif is_full_house(player.cards)
 			player.points = ConstClass::FULL_HOUSE
+			player.game_name = "FULL_HOUSE"
 		elsif is_flush(player.cards)
 			player.points = ConstClass::FLUSH
+			player.game_name = "FLUSH"
 		elsif is_straight(player.cards)
 			player.points = ConstClass::STRAIGHT
+			player.game_name = "STRAIGHT"
 		elsif check_three(player.cards).length == 1
 			player.points = ConstClass::TRINCA
+			player.game_name = "TRINCA"
 		elsif check_pair(player.cards).length == 2
 			player.points = ConstClass::TWO_PAIRS
+			player.game_name = "TWO_PAIRS"
 		elsif check_pair(player.cards).length == 1
 			player.points = ConstClass::A_PAIR
+			player.game_name = "A_PAIR"
 		else
 			player.points = ConstClass::HIGHER_CARD
+			player.game_name = "HIGHER_CARD"
 		end
 		return player
 	end

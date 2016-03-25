@@ -45,10 +45,7 @@ class Match
 		else
 			@players = {}
 		end
-		print "Players: #{players.size}\n"
-		players.each{|v|
-			print v.to_s
-		}
+		print "\nPlayers: #{players.size}\n"
 		return players
 	end
 
@@ -56,19 +53,20 @@ class Match
 		points = {}
 		players.each {|key, value|
 			if points.has_key?(value.points)
-				points[value.points] = points[value.points] + 1
+				v = points[value.points]
+				points[value.points] = v + 1
 			elsif
 				points[value.points] = 1
 			end
 		}
 		return false if points.size == players.size
-		puts "points #{points}"
-
+		#	puts "points #{points}"
 		# get higher point and check if there is more than one player with this point
-		points = Hash[points.sort]
-		if points[points.keys.first] == 1
+		points = Hash[points.sort.reverse]
+		if points[points.keys.first].to_i == 1
 			return false
 		end
+		return true
 	end
 
 	def get_players_by_point(point)
@@ -83,10 +81,20 @@ class Match
 		player = nil
 		points = players[0].points
 		if points == ConstClass::A_PAIR
-			h = nil
 			player = get_higher_pair(players)
-		elsif points == ConstClass::A_PAIR
-
+		elsif points == ConstClass::STRAIGHT_FLUSH
+			player = get_higher_is_straight_flush(players)
+		elsif points == ConstClass::QUADRA
+			player = get_higher_four(players)
+		elsif points == ConstClass::FULL_HOUSE
+			player = get_higher_full_house(players)
+		elsif points == ConstClass::FLUSH
+		elsif points == ConstClass::STRAIGHT
+		elsif points == ConstClass::TRINCA
+			player = get_higher_three(players)
+		elsif points == ConstClass::TWO_PAIRS
+		elsif points == ConstClass::HIGHER_CARD
+			player = get_higher_is_straight_flush(players)
 		end
 	end
 
@@ -143,23 +151,3 @@ class Match
 		end
 	end
 end
-=begin
-print 'Type the numbers of the players: '
-players_number = gets.to_i
-while players_number > 4
-	print 'We can choose only four players. If want to stop, type 0: '
-	players_number = gets.to_i
-	if players_number == 0
-	  abort("Bye !! Thanks for play :)")
-	end
-end
-m = Match.new(players_number, [])
-result = m.play
-puts "result #{result}"
-if m.is_a_tie(result)
-
-else
-	print "The winner is player #{result[0].id}: #{result[0].to_s} "
-end
-puts "get_players_cards #{m.get_players_cards}"
-=end

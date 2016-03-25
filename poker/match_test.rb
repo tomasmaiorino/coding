@@ -44,6 +44,7 @@ class MatchTest < Test::Unit::TestCase
 	def test_is_a_tie_false
 		m = Match.new(0, @players)
 		players = m.play
+		#m.print_players
 		assert !m.is_a_tie(players)
 	end
 
@@ -51,6 +52,7 @@ class MatchTest < Test::Unit::TestCase
 		@players << Player.new(["4D", "4A", "JF", "5D", "QA"], 3)
 		m = Match.new(0, @players)
 		players = m.play
+		#m.print_players
 		assert !m.is_a_tie(players)
 	end
 

@@ -1,16 +1,17 @@
 class Player
 
-	attr_accessor :cards, :id, :points, :points_cards
+	attr_accessor :cards, :id, :points, :points_cards, :game_name
 
 	def initialize(cards, id, points = 0)
 		@cards = cards
 		@id = id
 		@points = points
 		@points_cards = {}
+		@game_name = ''
 	end
 
 	def to_s
-		puts "Player #{@id} cards: #{@cards} points: #{@points} points_cards: #{@points_cards}"
+		puts "Player #{@id} cards: #{@cards} points: #{@points}"
 	end
 
 	def get_cards_fit(points_cards)
