@@ -161,8 +161,7 @@ class PokerTest < Test::Unit::TestCase
 
 	def test_check_pair
 		cards = ["5D", "AA", "5F", "4D", "3B"]
-		pair = @p.check_pair(cards)
-		puts "pair #{pair}"
+		pair = @p.check_pair(cards)		
 		assert_equal(2, pair["5"].length)
 	end
 

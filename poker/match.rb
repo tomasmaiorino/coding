@@ -45,7 +45,7 @@ class Match
 		else
 			@players = {}
 		end
-		print "\nPlayers: #{players.size}\n"
+		#print "\nPlayers: #{players.size}\n"
 		return players
 	end
 
