@@ -20,14 +20,17 @@ class GameTest < Test::Unit::TestCase
 	end
 
 	def test_load_game
+		circles_length = 3
+		towers_length = 3
 		game = Game.new
-		circles = game.load_game(3, 3)
+		circles = game.load_game(circles_length, towers_length)
 		assert_not_nil(circles)
 		assert_not_empty(circles)
-		assert_equal(circles.size, 3)
+		assert_equal(circles.size, circles_length)
 		assert_equal(circles[0].size, 1)
 		assert_equal(circles[circles.size - 1].size, circles.size)
 		assert_equal(game.towers[1].circles.size, circles.size)
 		assert_equal(game.towers[1].circles[0].size, circles[0].size)
+		assert_equal(game.towers[1].get_first_circle.size, circles_length)
 	end
 end

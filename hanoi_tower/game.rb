@@ -9,7 +9,7 @@ class Game
 
   def load_towers(towers)
     for i in 0..towers - 1
-      @towers[i +1] = Tower.new(i + 1)
+      @towers[i +1] = Tower.new(i + 1, towers.size)
     end
     @towers = Hash[@towers.sort_by{|k, v| v.id}]
     return @towers
@@ -22,8 +22,8 @@ class Game
     end
     #order circles
     @circles.sort {|left, right| left.size <=> right.size}
-
-    @towers[1].circles = @circles[0]
+		#add the circles into the initial tower
+    @towers[1].circles = @circles
 
     return @circles
   end
