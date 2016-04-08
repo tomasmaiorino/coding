@@ -11,8 +11,15 @@ class Tower
 		id == towers_max
 	end
 
-	def get_first_circle
+	def get_top_circle
 		circles[circles.size - 1]
 	end
 
+	def get_bottom_circle
+		circles[0]
+	end
+
+	def is_right_place(pieces, actual_piece)
+		#!@circles.nil? && !@circles.empty? && get_bottom_circle.size ==
+	end
 end

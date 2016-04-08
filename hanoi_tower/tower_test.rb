@@ -21,10 +21,17 @@ class TowerTest < Test::Unit::TestCase
 		assert !tower.is_destiny
 	end
 
-	def test_get_first_circle
+	def test_get_top_circle
 		tower = Tower.new(1, 3)
 		circles = [Circle.new(1, tower), Circle.new(2, Tower.new(2,2)), Circle.new(3, Tower.new(3,3))]
 		tower.circles = circles
-		assert_equal(tower.get_first_circle.size, 3)
+		assert_equal(tower.get_top_circle.size, 3)
+	end
+
+	def test_get_bottom_circle
+		tower = Tower.new(3, 3)
+		circles = [Circle.new(3, Tower.new(3,3))]
+		tower.circles = circles
+		assert_equal(tower.get_bottom_circle.size, 3)
 	end
 end
