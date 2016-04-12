@@ -19,7 +19,9 @@ class Tower
 		circles[0]
 	end
 
-	def is_right_place(pieces, actual_piece)
-		#!@circles.nil? && !@circles.empty? && get_bottom_circle.size ==
+	def add_circle(circle)
+		circle.changing_tower(self)
+		@circles << circle
+		@circles.length
 	end
 end

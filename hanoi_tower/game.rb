@@ -21,7 +21,7 @@ class Game
       @circles << Circle.new(i + 1)
     end
     #order circles
-    @circles.sort {|left, right| left.size <=> right.size}
+    #@circles.sort {|left, right| left.size <=> right.size}
 		#add the circles into the initial tower
     @towers[1].circles = @circles
 
