@@ -16,11 +16,11 @@ class CircleTest < Test::Unit::TestCase
 	end
 
 	def test_circle_initialize_passing_nil_values
-			circle = Circle.new(1)
-			assert_equal(circle.size, 1)
-			assert_nil(circle.actual_tower)
-			assert_nil(circle.previous_tower)
-			assert (circle.never_played)
+		circle = Circle.new(1)
+		assert_equal(circle.size, 1)
+		assert_nil(circle.actual_tower)
+		assert_nil(circle.previous_tower)
+		assert (circle.never_played)
 	end
 
 	def test_get_circle_from_circles
@@ -29,6 +29,14 @@ class CircleTest < Test::Unit::TestCase
 		circle_2 = Circle.new(3)
 		assert_equal(circle.get_circle_from_circles(circles).size, circle.size)
 		assert_equal(circle_2.get_circle_from_circles(circles).size, circle_2.size)
+	end
+
+	def test_get_circle_position_from_circles
+		circle = Circle.new(1)
+		circles = [Circle.new(1, Tower.new(1,3)), Circle.new(2, Tower.new(2,3)), Circle.new(3, Tower.new(3,3))]
+		circle_2 = Circle.new(3)
+		assert_equal(circle.get_circle_position_from_circles(circles), 0)
+		assert_equal(circle_2.get_circle_position_from_circles(circles), 2)
 	end
 
 	def test_changin_tower
@@ -71,11 +79,9 @@ class CircleTest < Test::Unit::TestCase
 		assert_equal(Circle.moves_count, 3)
 		assert !circle_2.never_played
 
-
 		#checking globa classes changing
 		assert_equal(circle.circle_last_move, 2)
 		assert_equal(circle.circle_move_count, 2)
-
 	end
 
 	def test_is_right_place
@@ -84,15 +90,29 @@ class CircleTest < Test::Unit::TestCase
 		tower_2 = Tower.new(2, tower_qtd)
 		tower_3 = Tower.new(3, tower_qtd)
 
-		circles = [Circle.new(4, tower, nil), Circle.new(3, tower, nil), Circle.new(2, tower_2, nil), Circle.new(1, tower_3, nil)]
+		circles = [Circle.new(4, tower, nil), Circle.new(3, tower, nil), Circle.new(2, tower_2, nil), Circle.new(1, tower_2, nil)]
 		circle = circles[0]
+		#add circle 1
 		tower_3.add_circle(circle)
 		assert circle.is_right_place(circles)
 		circle_2 = circles[1]
+		#add circle 2
 		tower_3.add_circle(circle_2)
 		assert circle_2.is_right_place(circles)
 
 		circle_1 = circles[0]
 		assert circle_1.is_right_place(circles)
+
+		circle_3 = circles[2]
+		assert !circle_3.is_right_place(circles)
+		#add cicle 3
+		tower_3.add_circle(circle_3)
+		assert circle_3.is_right_place(circles)
+
+		#check circle 2 again
+		assert circle_2.is_right_place(circles)
+
+		circle_4 = circles[3]
+		assert !circle_4.is_right_place(circles)
 	end
 end

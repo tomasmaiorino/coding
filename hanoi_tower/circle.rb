@@ -16,7 +16,11 @@ class Circle
 	def is_right_place(circles)
 		if @actual_tower.is_destiny && !circles.nil? && !circles.empty? && @actual_tower.get_bottom_circle.size == circles[0].size
 			return true if @actual_tower.circles.length == 1
-			return true if @actual_tower.get_top_circle.size == @size && @size + 1 == @actual_tower.circles[@actual_tower.circles.length - 2].size
+			if @actual_tower.get_top_circle.size == @size && @size + 1 == @actual_tower.circles[@actual_tower.circles.length - 2].size
+				return true
+			elsif @size - 1 == @actual_tower.circles[get_circle_position_from_circles(circles) + 1].size
+				return true
+			end
 		end
 	return false
 	end
@@ -25,6 +29,14 @@ class Circle
 		if !circles.nil? && !circles.empty?
 			circles.each { |e|
 				return e if e.size == @size
+		  }
+		end
+	end
+
+	def get_circle_position_from_circles(circles)
+		if !circles.nil? && !circles.empty?
+			circles.each_with_index { |e, ind|
+				return ind if e.size == @size
 		  }
 		end
 	end
@@ -41,5 +53,4 @@ class Circle
 	def self.moves_count
     @@moves_count
   end
-
 end

@@ -27,4 +27,11 @@ class Game
 
     return @circles
   end
+
+  def get_next_empty_tower(towers, actual_circle)
+    towers.each {|key, value| 
+      return value if value.circles.empty?
+    }
+  end
+
 end
