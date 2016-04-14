@@ -24,4 +24,5 @@ class Tower
 		@circles << circle
 		@circles.length
 	end
+
 end

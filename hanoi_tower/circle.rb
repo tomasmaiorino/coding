@@ -53,4 +53,8 @@ class Circle
 	def self.moves_count
     @@moves_count
   end
+
+	def moved_before
+		@circle_last_move == @@moves_count - 1
+	end
 end

@@ -55,16 +55,31 @@ class TowerTest < Test::Unit::TestCase
 	def test_add_circle
 		tower_3 = Tower.new(3, 3)
 		tower_2 = Tower.new(2, 3)
-		circle = Circle.new(1, tower_2, nil)
-		circles_length = tower_3.add_circle(circle)
+		circle_1 = Circle.new(2, tower_2, nil)
+		circle_3 = Circle.new(3, tower_2, nil)
+		#add circle 3
+		circles_length = tower_3.add_circle(circle_3)
 		# checking circle changes
 		assert_equal(circles_length, 1)
-		assert_equal(circle.actual_tower.id, tower_3.id)
-		assert_equal(circle.previous_tower.id, tower_2.id)
-		assert_equal(circle.circle_move_count, 1)
-		#assert_equal(circle.circle_last_move, 1)
-		assert_equal(Circle.moves_count, circle.circle_last_move)
+		assert_equal(circle_3.actual_tower.id, tower_3.id)
+		assert_equal(circle_3.previous_tower.id, tower_2.id)
+		assert_equal(circle_3.circle_move_count, 1)
 
-		assert_equal(tower_3.get_bottom_circle.size, circle.size)
+		assert_equal(Circle.moves_count, circle_3.circle_last_move)
+		assert_equal(tower_3.get_bottom_circle.size, circle_3.size)
+
+		assert_equal(tower_3.circles[0].size, circle_3.size)
+
+		#add circle 1
+		circles_length = tower_3.add_circle(circle_1)
+		# checking circle changes
+		assert_equal(circles_length, 2)
+		assert_equal(circle_1.actual_tower.id, tower_3.id)
+		assert_equal(circle_1.previous_tower.id, tower_2.id)
+		assert_equal(circle_1.circle_move_count, 1)
+
+		assert_equal(Circle.moves_count, circle_1.circle_last_move)
+		assert_equal(tower_3.circles[1].size, circle_1.size)
 	end
+
 end

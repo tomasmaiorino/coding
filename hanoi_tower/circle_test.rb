@@ -115,4 +115,24 @@ class CircleTest < Test::Unit::TestCase
 		circle_4 = circles[3]
 		assert !circle_4.is_right_place(circles)
 	end
+
+	def test_moved_before
+			tower_qtd = 3
+			tower = Tower.new(1, tower_qtd)
+			tower_2 = Tower.new(2, tower_qtd)
+			tower_3 = Tower.new(3, tower_qtd)
+
+			circle_3 = Circle.new(3, tower, nil)
+			circle_2 = Circle.new(2, tower, nil)
+			circle_1 = Circle.new(1, tower, nil)
+
+			tower_2.add_circle(circle_1)
+			tower_3.add_circle(circle_2)
+			assert circle_1.moved_before
+			assert !circle_3.moved_before
+			assert !circle_2.moved_before
+			# add new circle
+			tower_3.add_circle(circle_1)
+			assert circle_2.moved_before
+	end
 end
