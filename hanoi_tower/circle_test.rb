@@ -32,11 +32,25 @@ class CircleTest < Test::Unit::TestCase
 	end
 
 	def test_get_circle_position_from_circles
-		circle = Circle.new(1)
 		circles = [Circle.new(1, Tower.new(1,3)), Circle.new(2, Tower.new(2,3)), Circle.new(3, Tower.new(3,3))]
-		circle_2 = Circle.new(3)
-		assert_equal(circle.get_circle_position_from_circles(circles), 0)
-		assert_equal(circle_2.get_circle_position_from_circles(circles), 2)
+		circle_1 = circles[2]
+		circle_2 = circles[1]
+		circle_3 = circles[0]
+
+		assert_equal circle_1.get_circle_position_from_circles(circles, circle_1), 2
+		assert_equal circle_1.get_circle_position_from_circles(circles, circle_2), 1
+		assert_equal circle_1.get_circle_position_from_circles(circles, circle_3), 0
+
+	end
+
+	def test_get_circle_position_from_circles_returning_nil
+		circles = [Circle.new(1, Tower.new(1,3)), Circle.new(2, Tower.new(2,3)), Circle.new(3, Tower.new(3,3))]
+		circle_1 = Circle.new(4, Tower.new(1,3))
+
+		assert_nil circle_1.get_circle_position_from_circles(circles, circle_1)
+		assert_nil circle_1.get_circle_position_from_circles(nil, circle_1)
+		assert_nil circle_1.get_circle_position_from_circles([], circle_1)
+
 	end
 
 	def test_changin_tower
