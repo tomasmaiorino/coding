@@ -155,10 +155,66 @@ class GameTest < Test::Unit::TestCase
 		game.towers[2].add_circle(circles[2])
 		game.towers[3].add_circle(circles[1])
 
-		circle = game.next_circle_to_move
+		circle = game.get_next_circle_to_move
 
 		assert_not_nil circle
 		assert_equal circle.size, 3
+		assert circle.never_played
 
+		#move the circle 1 to tower 3
+		game.towers[3].add_circle(circles[2])
+		# move the circle 3 to tower 2
+		game.towers[2].add_circle(circles[0])
+		# check if the circle 3 moves
+		assert !circle.never_played
+
+		#circle = game.get_next_circle_to_move
+		#assert_equal circle.size, 1
 	end
+
+	def test_get_all_top_circles_empty
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+
+		circle_1_removed = game.towers[1].remove_circle(circles[0])
+		circle_1_removed = game.towers[1].remove_circle(circles[1])
+		circle_1_removed = game.towers[1].remove_circle(circles[2])
+
+		circles_top = game.get_all_top_circles
+
+		assert_empty circles_top
+	end
+
+	def test_get_all_top_circles
+		game = Game.new
+		circles = game.load_game(3,3)
+		circles_top = game.get_all_top_circles
+		assert !circles_top.empty?
+		assert_equal circles_top.size, 1
+		assert_equal circles_top[0].size, 1
+
+		# remove circle 1 from tower 1 and add into tower 2
+		circle_1_removed = game.towers[1].remove_circle(circles[2])
+		game.towers[2].add_circle(circles[2])
+
+		circles_top = game.get_all_top_circles
+
+		assert_equal circles_top.size, 2
+		assert_equal circles_top[0].size, 2
+		assert_equal circles_top[1].size, 1
+
+		# remove circle 1 from tower 1 and add into tower 2
+		circle_1_removed = game.towers[1].remove_circle(circles[1])
+		game.towers[3].add_circle(circles[1])
+
+		circles_top = game.get_all_top_circles
+
+		assert_equal circles_top.size, 3
+		assert_equal circles_top[0].size, 3
+		assert_equal circles_top[1].size, 1
+		assert_equal circles_top[2].size, 2
+	end
+
 end

@@ -23,7 +23,9 @@ class Game
     #order circles
     #@circles.sort {|left, right| left.size <=> right.size}
 		#add the circles into the initial tower
-    @towers[1].tower_circles = @game_circles
+		@game_circles.each{|v|
+			@towers[1].tower_circles << v
+		}
 		circles_ret = @game_circles.sort! { |a,b| b.size <=> a.size }
     return circles_ret
   end
@@ -90,4 +92,11 @@ class Game
 		return finished
 	end
 
+	def get_all_top_circles
+		circles = []
+		@towers.each {|key, value|
+				circles << value.get_top_circle if !value.tower_circles.empty?
+		}
+		return circles
+	end
 end
