@@ -4,6 +4,9 @@ require_relative 'tower'
 require_relative 'game'
 class GameTest < Test::Unit::TestCase
 
+	#
+	# game_initialize
+	#
 	def test_game_initialize
 		game = Game.new
 		assert !game.towers.nil? && game.towers.empty?
@@ -11,6 +14,9 @@ class GameTest < Test::Unit::TestCase
 		assert game.actual_move == 0
 	end
 
+	#
+	# load_towers
+	#
 	def test_load_towers
 		game = Game.new
 		towers = game.load_towers(3)
@@ -22,6 +28,9 @@ class GameTest < Test::Unit::TestCase
 		assert_equal(towers[3].id, 3)
 	end
 
+	#
+	# load_game
+	#
 	def test_load_game
 		circles_length = 3
 		towers_length = 3
@@ -47,6 +56,9 @@ class GameTest < Test::Unit::TestCase
 		assert_equal(game.towers[1].get_top_circle.size , 1)
 	end
 
+	#
+	# get_next_empty_tower
+	#
 	def test_get_next_empty_tower
 		game = Game.new
 		circles_length = 3
@@ -71,7 +83,9 @@ class GameTest < Test::Unit::TestCase
 		assert_nil game.get_next_empty_tower(game.towers)
 	end
 
-
+	#
+	# is_finished
+	#
 	def test_is_finished_is_not_finished
 		game = Game.new
 		circles_length = 3
@@ -116,6 +130,7 @@ class GameTest < Test::Unit::TestCase
 		assert !game.finished
 	end
 
+
 	def test_is_finished_is_finished_with_two_circle_right_order
 		game = Game.new
 		circles_length = 3
@@ -129,6 +144,9 @@ class GameTest < Test::Unit::TestCase
 		assert game.finished
 	end
 
+	#
+	# get_circle_from_circles_by_size
+	#
 	def test_get_circle_from_circles_by_size
 		game = Game.new
 		circles = game.load_game(3,3)
@@ -137,6 +155,7 @@ class GameTest < Test::Unit::TestCase
 		assert_equal game.get_circle_from_circles_by_size(circles, 3).size, circles[0].size
 	end
 
+=begin
 	def test_get_circle_from_circles_by_size_returning_nil
 		game = Game.new
 		circles = game.load_game(3,3)
@@ -145,7 +164,7 @@ class GameTest < Test::Unit::TestCase
 		assert_nil game.get_circle_from_circles_by_size([], 4)
 	end
 
-		def test_get_next_circle_to_move_return_nerver_played_circle
+	def test_get_next_circle_to_move_return_nerver_played_circle
 		game = Game.new
 		circles = game.load_game(3,3)
 		# remove circles from tower_1
@@ -172,6 +191,79 @@ class GameTest < Test::Unit::TestCase
 		#assert_equal circle.size, 1
 	end
 
+	def test_get_next_circle_to_move_passing_circle
+		game = Game.new
+		circles = game.load_game(3,3)
+
+		# remove circles from tower_1
+		circle_2_removed = game.towers[1].remove_circle(circles[2])
+		circle_1_removed = game.towers[1].remove_circle(circles[1])
+		#add new circle into each empty tower
+		game.towers[2].add_circle(circles[2])
+		game.towers[3].add_circle(circles[1])
+		circle_3 = circles[0]
+
+		circle_2 = game.get_next_circle_to_move(circle_3)
+		assert_not_nil circle_2
+		#assert !circle_2.never_played
+		assert_equal circles[2].size, circle_2.size
+		assert_equal circle_2.actual_tower.id, game.towers[2].id
+		assert !circle_2.moved_before
+	end
+=end
+
+
+	#
+	# get_next_circles_available_to_move
+	#
+	def test_get_next_circles_available_to_move
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+
+		circle_1_removed = game.towers[1].remove_circle(circles[1])
+		circle_1_removed = game.towers[1].remove_circle(circles[2])
+
+		game.towers[2].add_circle(circles[2])
+		game.towers[3].add_circle(circles[1])
+
+		circles_available = game.get_next_circles_available_to_move
+
+		assert_not_empty circles_available
+		assert_equal 2, circles_available.size
+		assert_equal 3, circles_available[0].size
+		assert circles_available[0].never_played
+		assert_equal 2, circles_available[1].size
+
+		game.towers[2].add_circle(circles[2])
+
+		circles_available = game.get_next_circles_available_to_move
+
+		assert_not_empty circles_available
+		assert_equal 2, circles_available.size
+		assert_equal 3, circles_available[0].size
+		assert circles_available[0].never_played
+		assert_equal 1, circles_available[1].size
+
+	end
+
+	def test_get_next_circles_available_to_move_empty
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+		circles_available = game.get_next_circles_available_to_move
+
+		assert_not_empty circles_available
+		assert_equal 1, circles_available.size
+		assert_equal 1, circles_available[0].size
+
+	end
+
+		#
+		# get_all_top_circles_empty
+		#
 	def test_get_all_top_circles_empty
 		circles_length = 3
 		towers_length = 3
@@ -211,10 +303,11 @@ class GameTest < Test::Unit::TestCase
 
 		circles_top = game.get_all_top_circles
 
-		assert_equal circles_top.size, 3
-		assert_equal circles_top[0].size, 3
-		assert_equal circles_top[1].size, 1
-		assert_equal circles_top[2].size, 2
+		assert_equal 3, circles_top.size
+		assert_equal 3, circles_top[0].size
+		assert_equal 1, circles_top[1].size
+		assert_equal 2, circles_top[2].size
+
 	end
 
 end

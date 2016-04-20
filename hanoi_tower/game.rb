@@ -37,25 +37,21 @@ class Game
 		return nil
   end
 
-	def get_next_circle_to_move
-		circle = nil
-		@game_circles.each {|v|
-			return v if v.never_played
-			if !v.moved_before
-				if circle == nil
-					circle = v
-					next
-				elsif v.size > circle.size
-					circle = v
-				end
-			end
+	def get_next_circles_available_to_move
+		circles = []
+		get_all_top_circles.each {|v|
+				circles << v if !v.moved_before
 		}
-		return circle
+		return circles.sort {|a,b| b.size <=> a.size}
 	end
 
 	def move
 		first_tower = @towers[1]
 		if !finished
+			circle = get_next_circle_to_move
+			if !circle.nil?
+
+			end
 		end
 	end
 
@@ -99,4 +95,29 @@ class Game
 		}
 		return circles
 	end
+
+=begin
+		def get_next_circle_to_move(p_circle = nil)
+			circle = nil
+			get_all_top_circles.each {|v|
+				if !p_circle.nil?
+					return v if v.never_played && p_circle.size != v.size
+				else
+					return v if v.never_played
+				end
+				if !v.moved_before
+					if circle.nil?
+						circle = v
+						next
+					elsif v.size > circle.size
+						if p_circle.nil? || (p_circle != nil && p_circle.size != v.size)
+							circle = v
+						end
+					end
+				end
+			}
+			return circle
+		end
+=end
+
 end
