@@ -46,13 +46,70 @@ class Game
 	end
 
 	def move
-		first_tower = @towers[1]
+		puts "Move count: #{Circle.moves_count}"
 		if !finished
-			circle = get_next_circle_to_move
-			if !circle.nil?
-
+			circles = get_next_circles_available_to_move
+			if !circles.nil?
+				circles.each{|c|
+					@towers.each {|key, value|
+						if c.bigger_one(@game_circles[0])
+							if value.is_destiny
+								if value.tower_circles.empty?
+									value.change_circle(c)
+									move
+								end
+							end
+						elsif value.is_destiny
+							if !value.tower_circles.empty?
+								if c.size == value.get_top_circle.size + 1
+									value.change_circle(c)
+									move
+								end
+							end
+						end
+						towers_2 = configure_tower(get_all_towers_available, c)
+						towers_2.each{|t2|
+							if !t2.tower_circles.empty?
+								if c.previous_tower.id != t2.id
+									t2.change_circle(c)
+									move
+								end
+							else
+								if !c.previous_tower.nil?
+									if c.previous_tower.id != t2.id
+										t2.change_circle(c)
+										move
+									end
+								end
+							end
+						}
+					}
+				}
 			end
+		else
+			puts "finished "
+			puts "tower 3 #{@towers[3].print_tower}"
+			abort("end")
 		end
+	end
+
+	def configure_tower(p_towers, circle)
+		towers = []
+		empty_towers = []
+		p_towers.each{ |t|
+			if !t.tower_circles.empty?
+				if t.get_top_circle.size > circle.size
+					towers << t
+				end
+			else
+				empty_towers << t
+			end
+		}
+		towers = towers.sort! { |a,b|
+			b.get_top_circle.size <=> a.get_top_circle.size
+		}
+		towers.concat empty_towers unless empty_towers.empty?
+		return towers
 	end
 
 	def get_circle_from_circles_by_size(circles, size)
@@ -96,6 +153,13 @@ class Game
 		return circles
 	end
 
+	def get_all_towers_available
+		towers = []
+		@towers.each {|key, value|
+					towers << value
+		}
+		return towers
+	end
 =begin
 		def get_next_circle_to_move(p_circle = nil)
 			circle = nil

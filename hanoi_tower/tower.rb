@@ -25,6 +25,17 @@ class Tower
 		@tower_circles.length
 	end
 
+	def change_circle(circle)
+		puts "removing circle #{circle.size} from actual_tower #{circle.actual_tower.id}"
+		circle_removed = circle.actual_tower.remove_circle(circle)
+		if !circle_removed.nil?
+			puts "adding to tower #{@id}"
+			return add_circle(circle)
+		else
+			return nil
+		end
+	end
+
 	def tower_circles
 		@tower_circles.sort! { |a,b| b.size <=> a.size }
 	end
@@ -37,6 +48,13 @@ class Tower
 			@tower_circles.delete_at(ind)
 		end
 		return circle_to_return
+	end
+
+	def print_tower
+		puts "|Tower: #{id}|"
+		@tower_circles.each{|x|
+			print "|circle #{x.size}|"
+		}
 	end
 
 end

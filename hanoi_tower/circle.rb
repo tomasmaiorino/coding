@@ -33,6 +33,11 @@ class Circle
 		end
 	end
 
+	def bigger_one(bigger_circle)
+		@size == bigger_circle.size
+	end
+
+
 	def get_circle_from_circles(circles)
 		if !circles.nil? && !circles.empty?
 			circles.each { |e|

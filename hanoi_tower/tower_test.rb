@@ -4,6 +4,9 @@ require_relative 'tower'
 require_relative 'game'
 class TowerTest < Test::Unit::TestCase
 
+	#
+	# tower_initialize
+	#
 	def test_tower_initialize
 		tower = Tower.new(1, 3)
 		assert_equal(tower.id, 1)
@@ -11,6 +14,9 @@ class TowerTest < Test::Unit::TestCase
 		assert_equal(tower.towers_max, 3)
 	end
 
+	#
+	# tower_is_destiny
+	#
 	def test_tower_is_destiny
 		tower = Tower.new(3, 3)
 		assert tower.is_destiny
@@ -24,6 +30,9 @@ class TowerTest < Test::Unit::TestCase
 		assert !tower.is_destiny
 	end
 
+	#
+	# get_top_circle
+	#
 	def test_get_top_circle
 		tower = Tower.new(1, 3)
 		tower_2 = Tower.new(2,2)
@@ -45,6 +54,9 @@ class TowerTest < Test::Unit::TestCase
 
 	end
 
+	#
+	# get_bottom_circle
+	#
 	def test_get_bottom_circle
 		tower = Tower.new(3, 3)
 		circles = [Circle.new(3, Tower.new(3,3))]
@@ -52,6 +64,9 @@ class TowerTest < Test::Unit::TestCase
 		assert_equal(tower.get_bottom_circle.size, 3)
 	end
 
+	#
+	# add_circle
+	#
 	def test_add_circle
 		tower_3 = Tower.new(3, 3)
 		tower_2 = Tower.new(2, 3)
@@ -94,6 +109,9 @@ class TowerTest < Test::Unit::TestCase
 		assert_equal(tower_3.tower_circles[2].size, circle_1.size)
 	end
 
+	#
+	# remove_circle
+	#
 	def test_remove_circle
 		tower_2 = Tower.new(2, 3)
 		circle_1 = Circle.new(1, tower_2, nil)
@@ -101,9 +119,11 @@ class TowerTest < Test::Unit::TestCase
 		circle_3 = Circle.new(3, tower_2, nil)
 
 		tower_2.add_circle(circle_3)
+#		tower_2.print_tower
 		tower_2.add_circle(circle_2)
+#		tower_2.print_tower
 		tower_2.add_circle(circle_1)
-
+#		tower_2.print_tower
 
 		#checking tower's circles length
 		assert_equal tower_2.tower_circles.size, 3
@@ -128,4 +148,33 @@ class TowerTest < Test::Unit::TestCase
 		assert_equal tower_2.tower_circles.size, 1
 	end
 
+	#
+	# change_circle
+	#
+	def test_change_circle
+		tower_3 = Tower.new(3, 3)
+		tower_2 = Tower.new(2, 3)
+		circle_1 = Circle.new(1, tower_2, nil)
+		circle_2 = Circle.new(2, tower_2, nil)
+		circle_3 = Circle.new(3, tower_2, nil)
+
+		tower_2.add_circle(circle_1)
+		tower_2.add_circle(circle_2)
+		tower_2.add_circle(circle_3)
+
+		ind = tower_2.tower_circles.index { |x| x.size == circle_3.size }
+		assert_equal(0, ind)
+
+		count = tower_3.change_circle(circle_3)
+
+		# checking circle changes
+		assert_equal(1, count)
+		assert_equal(tower_3.id, circle_3.actual_tower.id)
+		assert_equal(tower_2.id, circle_3.previous_tower.id)
+		assert_equal(2, circle_3.circle_move_count)
+
+		ind = tower_2.tower_circles.index { |x| x.size == circle_3.size }
+		assert_nil ind
+
+	end
 end

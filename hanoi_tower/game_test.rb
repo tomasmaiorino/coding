@@ -310,4 +310,56 @@ class GameTest < Test::Unit::TestCase
 
 	end
 
+	#
+	# configure_tower
+	#
+	def test_configure_tower
+		game = Game.new
+
+		tower_3 = Tower.new(3, 3)
+		tower_2 = Tower.new(2, 3)
+		tower_1 = Tower.new(1, 3)
+
+		circle_1 = Circle.new(1, tower_1, nil)
+		circle_2 = Circle.new(2, tower_1, nil)
+		circle_3 = Circle.new(3, tower_1, nil)
+
+		tower_1.add_circle circle_3
+		tower_1.add_circle circle_2
+		#tower_2.add_circle circle_2
+		tower_2.add_circle circle_1
+
+		towers = [tower_3, tower_1]
+		towers = game.configure_tower(towers, circle_1)
+		assert_not_empty towers
+		assert_equal 1, towers[0].id
+		assert_equal 3, towers[1].id
+		assert_empty towers[1].tower_circles
+
+		tower_3 = Tower.new(3, 3)
+		tower_2 = Tower.new(2, 3)
+		tower_1 = Tower.new(1, 3)
+
+		tower_1.add_circle circle_3
+		tower_3.add_circle circle_2
+		#tower_2.add_circle circle_2
+		tower_2.add_circle circle_1
+
+		towers = [tower_3, tower_1, tower_2]
+		towers = game.configure_tower(towers, circle_1)
+		assert_not_empty towers
+		assert_equal 1, towers[0].id
+		assert_equal 3, towers[1].id
+		#assert_empty towers[1].tower_circles
+	end
+
+	def test_move
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+		#puts "moves count #{game.game_circles[0].moves_count}"
+	 	game.move
+		#puts "=============== moves count #{count}"
+	end
 end

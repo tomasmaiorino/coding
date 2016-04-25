@@ -31,6 +31,9 @@ class CircleTest < Test::Unit::TestCase
 		assert_equal(circle_2.get_circle_from_circles(circles).size, circle_2.size)
 	end
 
+	#
+	# get_circle_position_from_circles
+	#
 	def test_get_circle_position_from_circles
 		circles = [Circle.new(1, Tower.new(1,3)), Circle.new(2, Tower.new(2,3)), Circle.new(3, Tower.new(3,3))]
 		circle_1 = circles[2]
@@ -43,6 +46,9 @@ class CircleTest < Test::Unit::TestCase
 
 	end
 
+	#
+	# get_circle_position_from_circles_returning_nil
+	#
 	def test_get_circle_position_from_circles_returning_nil
 		circles = [Circle.new(1, Tower.new(1,3)), Circle.new(2, Tower.new(2,3)), Circle.new(3, Tower.new(3,3))]
 		circle_1 = Circle.new(4, Tower.new(1,3))
@@ -53,6 +59,9 @@ class CircleTest < Test::Unit::TestCase
 
 	end
 
+	#
+	# changin_tower
+	#
 	def test_changin_tower
 		tower_1 = Tower.new(1,3)
 		tower_2 = Tower.new(2,3)
@@ -98,6 +107,9 @@ class CircleTest < Test::Unit::TestCase
 		assert_equal(circle.circle_move_count, 2)
 	end
 
+	#
+	# is_right_place
+	#
 	def test_is_right_place
 		tower_qtd = 3
 		tower = Tower.new(1, tower_qtd)
@@ -130,6 +142,9 @@ class CircleTest < Test::Unit::TestCase
 		assert !circle_4.is_right_place(circles)
 	end
 
+	#
+	# moved_before
+	#
 	def test_moved_before
 			tower_qtd = 3
 			tower = Tower.new(1, tower_qtd)
@@ -148,5 +163,21 @@ class CircleTest < Test::Unit::TestCase
 			# add new circle
 			tower_3.add_circle(circle_1)
 			assert circle_2.moved_before
+	end
+
+	#
+	# bigger_one
+	#
+	def test_bigger_one
+		tower_qtd = 3
+		tower = Tower.new(1, tower_qtd)
+		tower_2 = Tower.new(2, tower_qtd)
+		tower_3 = Tower.new(3, tower_qtd)
+
+		circles = [Circle.new(4, tower, nil), Circle.new(3, tower, nil), Circle.new(2, tower_2, nil), Circle.new(1, tower_2, nil)]
+		circles =  circles.sort! { |a,b| b.size <=> a.size }
+		assert circles[0].bigger_one(circles[0])
+		assert !circles[1].bigger_one(circles[0])
+		assert !circles[2].bigger_one(circles[0])
 	end
 end
