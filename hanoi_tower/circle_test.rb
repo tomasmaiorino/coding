@@ -157,7 +157,7 @@ class CircleTest < Test::Unit::TestCase
 
 			tower_2.add_circle(circle_1)
 			tower_3.add_circle(circle_2)
-			assert circle_1.moved_before
+
 			assert !circle_3.moved_before
 			assert !circle_2.moved_before
 			# add new circle
