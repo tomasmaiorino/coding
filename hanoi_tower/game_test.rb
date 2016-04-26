@@ -225,7 +225,9 @@ class GameTest < Test::Unit::TestCase
 		circle_1_removed = game.towers[1].remove_circle(circles[1])
 		circle_1_removed = game.towers[1].remove_circle(circles[2])
 
+		#add circle size 1
 		game.towers[2].add_circle(circles[2])
+		#add circle size 2
 		game.towers[3].add_circle(circles[1])
 
 		circles_available = game.get_next_circles_available_to_move
@@ -234,8 +236,9 @@ class GameTest < Test::Unit::TestCase
 		assert_equal 2, circles_available.size
 		assert_equal 3, circles_available[0].size
 		assert circles_available[0].never_played
-		assert_equal 2, circles_available[1].size
+		assert_equal 1, circles_available[1].size
 
+		#add circle size 1
 		game.towers[2].add_circle(circles[2])
 
 		circles_available = game.get_next_circles_available_to_move
@@ -244,7 +247,7 @@ class GameTest < Test::Unit::TestCase
 		assert_equal 2, circles_available.size
 		assert_equal 3, circles_available[0].size
 		assert circles_available[0].never_played
-		assert_equal 1, circles_available[1].size
+		assert_equal 2, circles_available[1].size
 
 	end
 
@@ -316,41 +319,72 @@ class GameTest < Test::Unit::TestCase
 	def test_configure_tower
 		game = Game.new
 
-		tower_3 = Tower.new(3, 3)
-		tower_2 = Tower.new(2, 3)
-		tower_1 = Tower.new(1, 3)
+		game = Game.new
+		game.load_game(3,3)
 
-		circle_1 = Circle.new(1, tower_1, nil)
-		circle_2 = Circle.new(2, tower_1, nil)
-		circle_3 = Circle.new(3, tower_1, nil)
+		tower_3 = game.towers[3]
+		tower_2 = game.towers[2]
+		tower_1 = game.towers[1]
 
-		tower_1.add_circle circle_3
-		tower_1.add_circle circle_2
+		circle_1 = game.game_circles[2]
+		circle_2 = game.game_circles[1]
+		circle_3 = game.game_circles[0]
+
+		tower_1.change_circle circle_3
+		tower_1.change_circle circle_2
 		#tower_2.add_circle circle_2
-		tower_2.add_circle circle_1
+		tower_2.change_circle circle_1
 
-		towers = [tower_3, tower_1]
-		towers = game.configure_tower(towers, circle_1)
+		#check tower 2 top circle
+		assert tower_1.get_top_circle.size == 2
+		#check tower 2 top circle
+		assert tower_2.get_top_circle.size == 1
+
+		assert circle_1.last_moved
+		temp_towers = game.get_all_towers_available
+		towers = game.configure_tower(temp_towers, circle_2)
+
+		assert_not_empty towers
+		assert_equal 3, towers[0].id
+
+		tower_3.change_circle circle_2
+
+		puts "-------------------"
+		puts tower_3.to_s
+		puts tower_2.to_s
+		puts tower_1.to_s
+
+		towers =  game.configure_tower(temp_towers, circle_1)
+
 		assert_not_empty towers
 		assert_equal 1, towers[0].id
 		assert_equal 3, towers[1].id
-		assert_empty towers[1].tower_circles
 
-		tower_3 = Tower.new(3, 3)
-		tower_2 = Tower.new(2, 3)
-		tower_1 = Tower.new(1, 3)
+		tower_3.change_circle circle_1
 
-		tower_1.add_circle circle_3
-		tower_3.add_circle circle_2
-		#tower_2.add_circle circle_2
-		tower_2.add_circle circle_1
+		towers =  game.configure_tower(temp_towers, circle_3)
+		puts "-------------------"
+		puts tower_3.to_s
+		puts tower_2.to_s
+		puts tower_1.to_s
 
-		towers = [tower_3, tower_1, tower_2]
-		towers = game.configure_tower(towers, circle_1)
-		assert_not_empty towers
-		assert_equal 1, towers[0].id
-		assert_equal 3, towers[1].id
-		#assert_empty towers[1].tower_circles
+		assert towers.size == 1
+		assert_equal 2, towers[0].id
+		assert_empty towers[0].tower_circles
+
+		tower_2.change_circle circle_1
+
+		puts "-------------------"
+		puts tower_3.to_s
+		puts tower_2.to_s
+		puts tower_1.to_s
+
+		towers =  game.configure_tower(temp_towers, circle_3)
+
+
+
+		assert_empty towers
+
 	end
 
 	def test_move

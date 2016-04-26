@@ -145,7 +145,7 @@ class CircleTest < Test::Unit::TestCase
 	#
 	# last_moved
 	#
-	def test_moved_before
+	def test_last_moved
 			tower_qtd = 3
 			tower = Tower.new(1, tower_qtd)
 			tower_2 = Tower.new(2, tower_qtd)
@@ -156,13 +156,18 @@ class CircleTest < Test::Unit::TestCase
 			circle_1 = Circle.new(1, tower, nil)
 
 			tower_2.add_circle(circle_1)
-			tower_3.add_circle(circle_2)
+			assert circle_1.last_moved
 
-			assert !circle_3.last_moved
-			assert !circle_2.last_moved
-			# add new circle
-			tower_3.add_circle(circle_1)
+			tower_3.add_circle(circle_2)
 			assert circle_2.last_moved
+
+			assert !circle_1.last_moved
+			tower_3.add_circle(circle_1)
+			assert circle_1.last_moved
+			assert !circle_2.last_moved
+			assert !circle_3.last_moved
+			tower_3.add_circle(circle_3)
+			assert circle_3.last_moved
 	end
 
 	#

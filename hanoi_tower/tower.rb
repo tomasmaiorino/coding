@@ -57,4 +57,8 @@ class Tower
 		}
 	end
 
+	def to_s
+		print_tower
+	end
+
 end

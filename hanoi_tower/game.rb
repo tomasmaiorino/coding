@@ -24,6 +24,7 @@ class Game
     #@circles.sort {|left, right| left.size <=> right.size}
 		#add the circles into the initial tower
 		@game_circles.each{|v|
+			v.actual_tower = @towers[1]
 			@towers[1].tower_circles << v
 		}
 		circles_ret = @game_circles.sort! { |a,b| b.size <=> a.size }
@@ -49,6 +50,7 @@ class Game
 		puts "Move count: #{Circle.moves_count}"
 		if !finished
 			circles = get_next_circles_available_to_move
+			puts "circles to move #{circles}"
 			if !circles.nil?
 				circles.each{|c|
 					@towers.each {|key, value|

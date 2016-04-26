@@ -47,8 +47,8 @@ class Circle
 	end
 
 	def changing_tower(tower)
-		@circle_last_move = @@moves_count
 		@@moves_count += 1
+		@circle_last_move = @@moves_count
 		@previous_tower = @actual_tower
 		@actual_tower = tower
 		@circle_move_count += 1
