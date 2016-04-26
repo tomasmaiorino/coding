@@ -59,7 +59,7 @@ class Circle
     @@moves_count
   end
 
-	def moved_before
-		@circle_last_move == @@moves_count - 1 || @circle_last_move == @@moves_count
+	def last_moved
+		@circle_last_move == @@moves_count
 	end
 end

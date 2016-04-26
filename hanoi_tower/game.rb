@@ -40,7 +40,7 @@ class Game
 	def get_next_circles_available_to_move
 		circles = []
 		get_all_top_circles.each {|v|
-				circles << v if !v.moved_before
+				circles << v if !v.last_moved
 		}
 		return circles.sort {|a,b| b.size <=> a.size}
 	end
@@ -164,7 +164,7 @@ class Game
 				else
 					return v if v.never_played
 				end
-				if !v.moved_before
+				if !v.last_moved
 					if circle.nil?
 						circle = v
 						next

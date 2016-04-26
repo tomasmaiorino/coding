@@ -208,7 +208,7 @@ class GameTest < Test::Unit::TestCase
 		#assert !circle_2.never_played
 		assert_equal circles[2].size, circle_2.size
 		assert_equal circle_2.actual_tower.id, game.towers[2].id
-		assert !circle_2.moved_before
+		assert !circle_2.last_moved
 	end
 =end
 
