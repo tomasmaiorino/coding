@@ -54,7 +54,7 @@ class Game
 		puts "Move count: #{Circle.moves_count}"
 		if !finished
 			circles = get_next_circles_available_to_move
-			puts "circles to move #{circles}"
+			puts "circles to move #{circles.size}"
 			if !circles.nil?
 				circles.each{|c|
 					@towers.each {|key, value|
@@ -81,6 +81,7 @@ class Game
 							move
 						else
 							tower_temp = get_towers_with_smaller_circles(towers_2)
+							puts "tower_temp #{tower_temp}"
 							new_tower_temp = Tower.new(1, 1)
 							# concat the smallest tower circles
 							new_tower_temp.tower_circles.concat tower_temp.tower_circles
@@ -124,6 +125,9 @@ class Game
 	def configure_tower(p_towers, circle)
 		towers = []
 		empty_towers = []
+		if Circle.moves_count == 0
+			return get_towers_but_one(circle.actual_tower)
+		end
 		p_towers.each{ |t|
 			if !t.tower_circles.empty?
 				if t.get_top_circle.size > circle.size
@@ -211,10 +215,17 @@ class Game
 
 	def contain_empty_towers(towers)
 		contain_empty = false
-		towers.each {|key, value|
-				contain_empty = value.tower_circles.empty?
-				return 	contain_empty if contain_empty
-		}
+		 if towers.kind_of?(Array)
+			 towers.each {|value|
+					 contain_empty = value.tower_circles.empty?
+					 return 	contain_empty if contain_empty
+			 }
+		 else
+			 towers.each {|key, value|
+					 contain_empty = value.tower_circles.empty?
+					 return 	contain_empty if contain_empty
+			 }
+		 end
 		return contain_empty
 	end
 
@@ -231,6 +242,13 @@ class Game
 		return true
 	end
 
+	def get_towers_but_one(tower)
+		towers = []
+		@towers.each {|key, value|
+				towers << value if value.id != tower.id
+		}
+		return towers
+	end
 =begin
 		def get_next_circle_to_move(p_circle = nil)
 			circle = nil

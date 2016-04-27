@@ -318,9 +318,14 @@ class GameTest < Test::Unit::TestCase
 	#
 	def test_configure_tower
 		game = Game.new
-
-		game = Game.new
 		game.load_game(3,3)
+		
+		# block for test first move check method into configure_tower method
+		towers = game.configure_tower(game.get_all_towers_available, game.game_circles[2])
+		assert_not_empty towers
+		assert_equal 2, towers.size
+		assert_equal 2, towers[0].id
+		assert_equal 3, towers[1].id
 
 		tower_3 = game.towers[3]
 		tower_2 = game.towers[2]
@@ -380,24 +385,7 @@ class GameTest < Test::Unit::TestCase
 		puts tower_1.to_s
 
 		towers =  game.configure_tower(temp_towers, circle_3)
-
-
-
 		assert_empty towers
-
-	end
-
-	#
-	# move
-	#
-	def test_move
-		circles_length = 3
-		towers_length = 3
-		game = Game.new
-		circles = game.load_game(circles_length, towers_length)
-		#puts "moves count #{game.game_circles[0].moves_count}"
-	 	game.move
-		#puts "=============== moves count #{count}"
 	end
 
 	#
@@ -476,4 +464,31 @@ class GameTest < Test::Unit::TestCase
 
 		assert !game.is_all_games_circles_ordered(game.towers[3])
 	end
+
+	#
+	# get_towers_but_one
+	#
+	def test_get_towers_but_one
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+
+		towers = game.get_towers_but_one(game.towers[1])
+
+		assert_not_empty towers
+		assert_equal 2, towers.size
+		assert_equal 2, towers[0].id
+		assert_equal 3, towers[1].id
+
+		towers = game.get_towers_but_one(game.towers[2])
+
+		assert_not_empty towers
+		assert_equal 2, towers.size
+		assert_equal 1, towers[0].id
+		assert_equal 3, towers[1].id
+
+	end
+
+
 end
