@@ -26,10 +26,10 @@ class Tower
 	end
 
 	def change_circle(circle)
-		puts "removing circle #{circle.size} from actual_tower #{circle.actual_tower.id}"
+		puts "removing circle: #{circle.size} from actual_tower: #{circle.actual_tower.id}"
 		circle_removed = circle.actual_tower.remove_circle(circle)
 		if !circle_removed.nil?
-			puts "adding to tower #{@id}"
+			puts "adding to tower: #{@id}"
 			return add_circle(circle)
 		else
 			return nil

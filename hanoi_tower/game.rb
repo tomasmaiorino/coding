@@ -40,6 +40,10 @@ class Game
 
 	def get_next_circles_available_to_move
 		circles = []
+		if Circle.moves_count == 0
+			circles << game_circles[game_circles.size - 1]
+			return circles
+		end
 		get_all_top_circles.each {|v|
 				circles << v if !v.last_moved
 		}
@@ -63,7 +67,35 @@ class Game
 									move
 							end
 						end
+						# configure all availables towers
 						towers_2 = configure_tower(get_all_towers_available, c)
+						if !contain_empty_towers(towers_2)
+							tower_temp = nil
+							if towers_2.size > 1
+								# get the tower with the smallest circle
+								tower_temp = get_towers_with_smaller_circles(towers_2)
+							else
+								tower_temp = towers_2[0]
+							end
+							tower_temp.change_circle(c)
+							move
+						else
+							tower_temp = get_towers_with_smaller_circles(towers_2)
+							new_tower_temp = Tower.new(1, 1)
+							# concat the smallest tower circles
+							new_tower_temp.tower_circles.concat tower_temp.tower_circles
+							new_tower_temp.tower_circles << c
+							if game.is_all_games_circles_ordered new_tower_temp
+								towers_2.each{|t3|
+									if t3.tower_circles.empty?
+										t3.change_circle c
+										move
+									end
+								}
+							end
+						end
+
+=begin
 						towers_2.each{|t2|
 							if !t2.tower_circles.empty? && c.previous_tower.id != t2.id
 									t2.change_circle(c)
@@ -78,6 +110,7 @@ class Game
 								end
 							end
 						}
+=end
 					}
 				}
 			end
@@ -157,6 +190,47 @@ class Game
 		}
 		return towers
 	end
+
+	def get_towers_with_smaller_circles(towers)
+		smaller_circle = nil
+		towers.each {|value|
+			if !value.tower_circles.empty?
+				if smaller_circle.nil?
+					smaller_circle = value.get_top_circle
+					next
+				else
+					if value.get_top_circle.size < smaller_circle.size
+						smaller_circle = value.get_top_circle
+						next
+					end
+				end
+			end
+		}
+		return smaller_circle
+	end
+
+	def contain_empty_towers(towers)
+		contain_empty = false
+		towers.each {|key, value|
+				contain_empty = value.tower_circles.empty?
+				return 	contain_empty if contain_empty
+		}
+		return contain_empty
+	end
+
+	def is_all_games_circles_ordered(tower)
+		return false if tower.tower_circles.size != @game_circles.size
+		finished = true
+		tower.tower_circles.each_with_index{|v, i|
+			if i < tower.tower_circles.size - 1
+				if v.size - 1 != tower.tower_circles[i + 1].size
+					finished = false
+				end
+			end
+		}
+		return true
+	end
+
 =begin
 		def get_next_circle_to_move(p_circle = nil)
 			circle = nil

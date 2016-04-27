@@ -177,4 +177,5 @@ class TowerTest < Test::Unit::TestCase
 		assert_nil ind
 
 	end
+
 end

@@ -387,6 +387,9 @@ class GameTest < Test::Unit::TestCase
 
 	end
 
+	#
+	# move
+	#
 	def test_move
 		circles_length = 3
 		towers_length = 3
@@ -395,5 +398,82 @@ class GameTest < Test::Unit::TestCase
 		#puts "moves count #{game.game_circles[0].moves_count}"
 	 	game.move
 		#puts "=============== moves count #{count}"
+	end
+
+	#
+	# contain_empty_towers
+	#
+	def test_contain_empty_towers
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+		assert game.contain_empty_towers(game.towers)
+
+		tower_2 = game.towers[2]
+		tower_3 = game.towers[3]
+
+		tower_2.change_circle game.game_circles[1]
+		tower_3.change_circle game.game_circles[2]
+
+		assert !game.contain_empty_towers(game.towers)
+	end
+
+	#
+	# get_towers_with_smaller_circles
+	#
+	def test_get_towers_with_smaller_circles
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+
+		tower_2 = game.towers[2]
+		tower_3 = game.towers[3]
+
+		tower_2.change_circle game.game_circles[1]
+		tower_3.change_circle game.game_circles[2]
+
+		towers = [tower_2, tower_3]
+		smaller_circle = game.get_towers_with_smaller_circles(towers)
+
+		towers = [tower_2, game.towers[1]]
+		smaller_circle = game.get_towers_with_smaller_circles(towers)
+		assert_equal game.game_circles[1].size, smaller_circle.size
+
+		towers = [tower_3, game.towers[1]]
+		smaller_circle = game.get_towers_with_smaller_circles(towers)
+		assert_equal game.game_circles[2].size, smaller_circle.size
+	end
+
+	#
+	# is_all_games_circles_ordered
+	#
+	def test_is_all_games_circles_ordered
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+
+		assert game.is_all_games_circles_ordered(game.towers[1])
+
+		tower_1 = game.towers[1]
+		tower_2 = game.towers[2]
+		tower_3 = game.towers[3]
+
+		tower_2.change_circle game.game_circles[2]
+
+		assert !game.is_all_games_circles_ordered(game.towers[1])
+
+		tower_3.change_circle game.game_circles[0]
+		tower_3.change_circle game.game_circles[1]
+		tower_3.change_circle game.game_circles[2]
+
+		assert !game.is_all_games_circles_ordered(game.towers[1])
+		assert game.is_all_games_circles_ordered(game.towers[3])
+
+		tower_2.change_circle game.game_circles[2]
+
+		assert !game.is_all_games_circles_ordered(game.towers[3])
 	end
 end
