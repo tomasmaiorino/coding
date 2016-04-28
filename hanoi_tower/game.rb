@@ -47,13 +47,33 @@ class Game
 		get_all_top_circles.each {|v|
 				circles << v if !v.last_moved
 		}
-		return circles.sort {|a,b| b.size <=> a.size}
+		return circles.sort {|a,b| a.size <=> b.size}
+	end
+
+	def remove_circles_at_final_position(circles)
+		new_circles = []
+		circles.each_with_index {|c, i|
+				if c.actual_tower.is_destiny
+					# skip in order to ignore the biggest one at the destiny tower
+					# which means that this is it final position
+					next if c.bigger_one(@game_circles[0])
+					if c.actual_tower.tower_circles.size > 1
+						actual_circle_ind = c.actual_tower.tower_circles.index { |x| x.size == c.size }
+						next if c.size + 1 == c.actual_tower.tower_circles[actual_circle_ind - 1].size
+					end
+					new_circles << c
+				else
+					new_circles << c
+				end
+		}
+		return new_circles
 	end
 
 	def move
 		puts "Move count: #{Circle.moves_count}"
 		if !finished
 			circles = get_next_circles_available_to_move
+			circles = remove_circles_at_final_position circles
 			puts "circles to move #{circles.size}"
 			if !circles.nil?
 				circles.each{|c|
@@ -69,49 +89,44 @@ class Game
 						end
 						# configure all availables towers
 						towers_2 = configure_tower(get_all_towers_available, c)
+						#puts "towers_2 #{towers_2}"
 						if !contain_empty_towers(towers_2)
 							tower_temp = nil
 							if towers_2.size > 1
 								# get the tower with the smallest circle
-								tower_temp = get_towers_with_smaller_circles(towers_2)
+								tower_temp = get_towers_with_smaller_circles(towers_2).actual_tower
 							else
 								tower_temp = towers_2[0]
 							end
 							tower_temp.change_circle(c)
 							move
 						else
-							tower_temp = get_towers_with_smaller_circles(towers_2)
-							puts "tower_temp #{tower_temp}"
+							if contain_only_empty_towers towers_2
+								towers_2[0].change_circle c
+								move
+							end
+							tower_temp = nil
+							if Circle.moves_count == 0
+								tower_temp = towers_2[0]
+							else
+								tower_temp = get_towers_with_smaller_circles(towers_2).actual_tower
+							end
 							new_tower_temp = Tower.new(1, 1)
 							# concat the smallest tower circles
 							new_tower_temp.tower_circles.concat tower_temp.tower_circles
 							new_tower_temp.tower_circles << c
-							if game.is_all_games_circles_ordered new_tower_temp
+							if is_all_games_circles_ordered new_tower_temp
 								towers_2.each{|t3|
 									if t3.tower_circles.empty?
 										t3.change_circle c
 										move
 									end
 								}
+							else
+								towers_2[0].change_circle c
+								move
 							end
 						end
-
-=begin
-						towers_2.each{|t2|
-							if !t2.tower_circles.empty? && c.previous_tower.id != t2.id
-									t2.change_circle(c)
-									move
-							else
-								if !c.previous_tower.nil? && c.previous_tower.id != t2.id
-										t2.change_circle(c)
-										move
-								else
-									t2.change_circle(c)
-									move
-								end
-							end
-						}
-=end
 					}
 				}
 			end
@@ -227,6 +242,26 @@ class Game
 			 }
 		 end
 		return contain_empty
+	end
+
+	def contain_only_empty_towers(towers)
+		contain_only_empty = true
+		towers_temp = []
+		 if towers.kind_of?(Array)
+			 towers.each {|value|
+				 towers_temp << value
+			 }
+		 else
+			 towers.each {|key, value|
+				  towers_temp << value
+			 }
+		 end
+			 towers_temp.each {|v|
+				 if !v.tower_circles.empty?
+					 contain_only_empty = false
+				 end
+			 }
+		return contain_only_empty
 	end
 
 	def is_all_games_circles_ordered(tower)

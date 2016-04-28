@@ -319,7 +319,7 @@ class GameTest < Test::Unit::TestCase
 	def test_configure_tower
 		game = Game.new
 		game.load_game(3,3)
-		
+
 		# block for test first move check method into configure_tower method
 		towers = game.configure_tower(game.get_all_towers_available, game.game_circles[2])
 		assert_not_empty towers
@@ -408,6 +408,32 @@ class GameTest < Test::Unit::TestCase
 	end
 
 	#
+	# contain_only_empty_towers
+	#
+	def test_contain_only_empty_towers
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+		assert !game.contain_only_empty_towers(game.towers)
+
+		tower_2 = game.towers[2]
+		tower_3 = game.towers[3]
+
+		tower_2.change_circle game.game_circles[1]
+		tower_3.change_circle game.game_circles[2]
+
+		assert !game.contain_only_empty_towers([tower_2, tower_3])
+
+		tower_1 = game.towers[1]
+		tower_1.change_circle game.game_circles[0]
+		tower_1.change_circle game.game_circles[1]
+		tower_1.change_circle game.game_circles[2]
+
+		assert game.contain_only_empty_towers([tower_2, tower_3])
+	end
+
+	#
 	# get_towers_with_smaller_circles
 	#
 	def test_get_towers_with_smaller_circles
@@ -489,6 +515,46 @@ class GameTest < Test::Unit::TestCase
 		assert_equal 3, towers[1].id
 
 	end
+
+	#
+	# remove_circles_at_final_position
+	#
+	def test_remove_circles_at_final_position
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+
+		circles_temp = game.remove_circles_at_final_position(circles)
+		assert_not_nil circles_temp
+		assert_equal 3, circles_temp.size
+
+		tower_1 = game.towers[1]
+		tower_2 = game.towers[2]
+		tower_3 = game.towers[3]
+
+		tower_3.change_circle game.game_circles[0]
+		circles_2 = [game.game_circles[1], game.game_circles[0]]
+
+		assert_equal 2, circles_2.size
+
+		circles_temp = game.remove_circles_at_final_position(circles_2)
+		assert_not_nil circles_temp
+		assert_equal 1, circles_temp.size
+		assert_equal 2, circles_temp[0].size
+
+		tower_3.change_circle game.game_circles[1]
+
+		circles_2 = [game.game_circles[1], game.game_circles[2]]
+
+		assert_equal 2, circles_2.size
+		circles_temp = game.remove_circles_at_final_position(circles_2)
+		assert_not_nil circles_temp
+		assert_equal 1, circles_temp.size
+		assert_equal 1, circles_temp[0].size
+
+	end
+
 
 
 end
