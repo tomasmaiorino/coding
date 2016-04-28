@@ -100,7 +100,7 @@ class GameTest < Test::Unit::TestCase
 		towers_length = 3
 		game.load_game(circles_length, towers_length)
 		tower_3 = game.towers[3]
-		tower_3.add_circle(game.game_circles[circles_length - 1])
+		tower_3.change_circle(game.game_circles[circles_length - 1])
 		assert !game.finished
 	end
 
@@ -111,9 +111,9 @@ class GameTest < Test::Unit::TestCase
 		game.load_game(circles_length, towers_length)
 		tower_3 = game.towers[3]
 		#add smaller circle
-		tower_3.add_circle(game.game_circles[circles_length - 1])
+		tower_3.change_circle(game.game_circles[circles_length - 1])
 		#add bigger circle
-		tower_3.add_circle(game.game_circles[0])
+		tower_3.change_circle(game.game_circles[0])
 		assert !game.finished
 	end
 
@@ -124,23 +124,23 @@ class GameTest < Test::Unit::TestCase
 		game.load_game(circles_length, towers_length)
 		tower_3 = game.towers[3]
 		#add smaller circle
-		tower_3.add_circle(game.game_circles[circles_length - 1])
+		tower_3.change_circle(game.game_circles[circles_length - 1])
 		#add bigger circle
-		tower_3.add_circle(game.game_circles[circles_length - 2])
+		tower_3.change_circle(game.game_circles[circles_length - 2])
 		assert !game.finished
 	end
 
 
-	def test_is_finished_is_finished_with_two_circle_right_order
+	def test_finished
 		game = Game.new
 		circles_length = 3
 		towers_length = 3
 		game.load_game(circles_length, towers_length)
 		tower_3 = game.towers[3]
 		#add smaller circle
-		tower_3.add_circle(game.game_circles[0])
-		tower_3.add_circle(game.game_circles[1])
-		tower_3.add_circle(game.game_circles[2])
+		tower_3.change_circle(game.game_circles[0])
+		tower_3.change_circle(game.game_circles[1])
+		tower_3.change_circle(game.game_circles[2])
 		assert game.finished
 	end
 

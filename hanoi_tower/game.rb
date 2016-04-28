@@ -58,8 +58,18 @@ class Game
 					# which means that this is it final position
 					next if c.bigger_one(@game_circles[0])
 					if c.actual_tower.tower_circles.size > 1
-						actual_circle_ind = c.actual_tower.tower_circles.index { |x| x.size == c.size }
-						next if c.size + 1 == c.actual_tower.tower_circles[actual_circle_ind - 1].size
+						destiny_tower_circles = c.actual_tower.tower_circles
+						is_ordered = true
+						destiny_tower_circles.each_with_index {|v, i|
+							if (i < c.actual_tower.tower_circles.size - 1)
+								if (v.size - 1 != destiny_tower_circles[i + 1].size)
+									is_ordered = false
+								end
+							end
+						}
+						next if is_ordered && destiny_tower_circles.index { |x| x.size == c.size } != nil
+#						actual_circle_ind = c.actual_tower.tower_circles.index { |x| x.size == c.size }
+#						next if c.size + 1 == c.actual_tower.tower_circles[actual_circle_ind - 1].size
 					end
 					new_circles << c
 				else
@@ -179,7 +189,20 @@ class Game
 				break
 			end
     }
-		finished = true
+		finished = false
+		if !destiny_tower.tower_circles.empty? && destiny_tower.tower_circles.size == @game_circles.size
+			is_ordered = true
+			destiny_tower.tower_circles.each_with_index{ |v, i|
+				if (i < destiny_tower.tower_circles.size - 1)
+					if (v.size - 1 != destiny_tower.tower_circles[i + 1].size)
+						is_ordered = false
+					end
+				end
+			}
+			finished = is_ordered
+		end
+
+=begin
 		if !destiny_tower.tower_circles.nil? && !destiny_tower.tower_circles.empty? && destiny_tower.tower_circles.size == @game_circles.size
 			destiny_tower.tower_circles.each_with_index{|v, i|
 				if i < destiny_tower.tower_circles.size - 1
@@ -191,6 +214,7 @@ class Game
 		else
 			finished = false
 		end
+=end
 		return finished
 	end
 
