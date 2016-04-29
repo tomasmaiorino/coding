@@ -234,7 +234,7 @@ class GameTest < Test::Unit::TestCase
 
 		assert_not_empty circles_available
 		assert_equal 2, circles_available.size
-		assert_equal 3, circles_available[0].size
+		assert_equal 1, circles_available[0].size
 		assert circles_available[0].never_played
 		assert_equal 1, circles_available[1].size
 
@@ -552,6 +552,17 @@ class GameTest < Test::Unit::TestCase
 		assert_not_nil circles_temp
 		assert_equal 1, circles_temp.size
 		assert_equal 1, circles_temp[0].size
+
+		tower_2.change_circle game.game_circles[0]
+
+		tower_3.change_circle game.game_circles[2]
+
+		circles_2 = [game.game_circles[1], game.game_circles[2]]
+		circles_temp = game.remove_circles_at_final_position(circles_2)
+		assert_not_nil circles_temp
+		assert_equal 2, circles_temp.size
+		assert_equal 2, circles_temp[0].size
+		assert_equal 1, circles_temp[1].size
 
 	end
 
