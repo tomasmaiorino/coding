@@ -142,6 +142,10 @@ class GameTest < Test::Unit::TestCase
 		tower_3.change_circle(game.game_circles[1])
 		tower_3.change_circle(game.game_circles[2])
 		assert game.finished
+
+		assert 3 == tower_3.tower_circles[0].size
+		assert 2 == tower_3.tower_circles[1].size
+		assert 1 == tower_3.tower_circles[2].size
 	end
 
 	#

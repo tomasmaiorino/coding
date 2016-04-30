@@ -12,7 +12,7 @@ class GameTest < Test::Unit::TestCase
 		game = Game.new
 		circles = game.load_game(circles_length, towers_length)
 		#puts "moves count #{game.game_circles[0].moves_count}"
-	 	game.move
+	 	game.new_move
 		#puts "=============== moves count #{count}"
 	end
 end
