@@ -171,9 +171,9 @@ class CircleTest < Test::Unit::TestCase
 	end
 
 	#
-	# bigger_one
+	# biggest_one
 	#
-	def test_bigger_one
+	def test_biggest_one
 		tower_qtd = 3
 		tower = Tower.new(1, tower_qtd)
 		tower_2 = Tower.new(2, tower_qtd)
@@ -181,8 +181,8 @@ class CircleTest < Test::Unit::TestCase
 
 		circles = [Circle.new(4, tower, nil), Circle.new(3, tower, nil), Circle.new(2, tower_2, nil), Circle.new(1, tower_2, nil)]
 		circles =  circles.sort! { |a,b| b.size <=> a.size }
-		assert circles[0].bigger_one(circles[0])
-		assert !circles[1].bigger_one(circles[0])
-		assert !circles[2].bigger_one(circles[0])
+		assert circles[0].biggest_one(circles[0])
+		assert !circles[1].biggest_one(circles[0])
+		assert !circles[2].biggest_one(circles[0])
 	end
 end

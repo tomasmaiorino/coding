@@ -33,7 +33,7 @@ class Circle
 		end
 	end
 
-	def bigger_one(bigger_circle)
+	def biggest_one(bigger_circle)
 		@size == bigger_circle.size
 	end
 
