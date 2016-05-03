@@ -658,9 +658,9 @@ class GameTest < Test::Unit::TestCase
 	end
 
 	#
-	# configure_tower_2
+	# get_towers_available_from_circle
 	#
-	def test_configure_tower_2
+	def test_get_towers_available_from_circle
 		circles_length = 3
 		towers_length = 3
 		game = Game.new
@@ -668,7 +668,7 @@ class GameTest < Test::Unit::TestCase
 
 		towers = game.get_all_towers_available
 
-		towers_temp = game.configure_tower_2(towers, game.game_circles[2])
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[2])
 
 		assert_not_empty towers_temp
 		assert_equal 2, towers_temp.size
@@ -677,26 +677,26 @@ class GameTest < Test::Unit::TestCase
 
 		game.towers[2].change_circle game.game_circles[2]
 
-		towers_temp = game.configure_tower_2(towers, game.game_circles[1])
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[1])
 
 		assert_empty towers_temp
 
 		game.towers[3].change_circle game.game_circles[1]
 
-		towers_temp = game.configure_tower_2(towers, game.game_circles[2])
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[2])
 
 		assert_not_empty towers_temp
 		assert_equal 2, towers_temp.size
 		assert_equal 1, towers_temp[0].id
 		assert_equal 3, towers_temp[1].id
 
-		towers_temp = game.configure_tower_2(towers, game.game_circles[1])
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[1])
 
 		assert_not_empty towers_temp
 		assert_equal 1, towers_temp.size
 		assert_equal 1, towers_temp[0].id
 
-		towers_temp = game.configure_tower_2(towers, game.game_circles[0])
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[0])
 
 		assert_empty towers_temp
 
