@@ -108,67 +108,67 @@ class Game
 			if !circles.empty?
 				circles.each {|c|
 					towers = get_towers_available_from_circle get_all_towers_available, c
+					#check first move
 					if Circle.moves_count == 0
 						empty_towers = get_all_tower_with_empty_circles(towers, true)
 						destiny_tower = get_destiny_tower empty_towers
 						if destiny_tower != nil
 							destiny_tower.change_circle c
 							new_move
+						end
 					end
-					#treat the destiny tower
+					# treat the destiny tower
 					treat_destiny_towers towers, circles
-
+					# retrieve all empty towers
 					empty_towers = get_all_tower_with_empty_circles(towers, true)
 
-					if towers.size == empty_towers.size
-						destiny_tower = get_destiny_tower empty_towers
-						if !destiny_tower.nil?
-							destiny_tower_ind = empty_towers.index{|i| i.id == destiny_tower.id}
-							not_destiny = nil
-							towers.each{|n|
-								if n.id != destiny_tower.id
-									not_destiny = n
-								end
-							}
-							if !not_destiny.nil?
-									not_destiny.change_circle c
-									new_move
+					destiny_tower = get_destiny_tower empty_towers
+					if !destiny_tower.nil?
+						destiny_tower_ind = empty_towers.index{|i| i.id == destiny_tower.id}
+						not_destiny = nil
+						towers.each{|n|
+							if n.id != destiny_tower.id
+								not_destiny = n
 							end
-						else
-							if !empty_towers.empty?
-								others_towers_with_more_than_circle = get_towers_with_more_than_one_circles(towers_2)
-								if !others_towers_with_more_than_circle.empty?
-										others_towers_with_more_than_circle.each{|t|
-											top_circle_ind = t.tower_circles.index {|x| x.size == c.size}
-											if !top_circle_ind.nil? && !get_destiny_tower(towers).tower_circles.empty?
-												if t.tower_circles[top_circle_ind - 1].size < get_destiny_tower.tower_circles.size
-													empty_towers[0].change_circle c
-													next
-												end
-											end
-										}
-								else
-									new_towers = configure_tower towers, c
-									if new_towers.empty?
-										empty_towers[0].change_circle c
-										new_move
-									else
-										new_towers[0].change_circle c
-										new_move
-									end
-								end
-							end
-						else
-							
+						}
+						if !not_destiny.nil?
+								not_destiny.change_circle c
+								new_move
 						end
-												destiny_tower = get_destiny_tower towers
-
+					else
+						if !empty_towers.empty?
+							others_towers_with_more_than_circle = get_towers_with_more_than_one_circles(towers_2)
+							if !others_towers_with_more_than_circle.empty?
+									others_towers_with_more_than_circle.each{|t|
+										top_circle_ind = t.tower_circles.index {|x| x.size == c.size}
+										if !top_circle_ind.nil? && !get_destiny_tower(towers).tower_circles.empty?
+											if t.tower_circles[top_circle_ind - 1].size < get_destiny_tower.tower_circles.size
+												empty_towers[0].change_circle c
+												next
+											end
+										end
+									}
+							else
+								new_towers = configure_tower towers, c
+								if new_towers.empty?
+									empty_towers[0].change_circle c
+									new_move
+								else
+									new_towers[0].change_circle c
+									new_move
+								end
+							end
+						end
+						destiny_tower = get_destiny_tower towers
 					end
+				}
+			end
+		end
+	end
 
 
 
-
-
+=begin
 					others_towers = get_all_tower_with_empty_circles(towers_configured, false)
 					#others_towers_with_more_than_circle = get_towers_with_more_than_one_circles(towers_configured)
 					towers_2 = nil
@@ -221,6 +221,7 @@ class Game
 			end
 		end
 	end
+	=end
 =begin
 				towers = get_all_towers_available
 				circles.each {|c|
@@ -682,7 +683,7 @@ class Game
 	#to_test
 	def contains_circles_by_size(circles, size)
 		ind = circles.index{|v| v.size == size}
-		return circles[ind] id ind != nil
+		return circles[ind] if ind != nil
 	end
 
 	#to test
@@ -701,8 +702,9 @@ class Game
 						destiny_tower.change_circle circle
 						move
 					end
+				end
 			end
-		else
 		end
 	end
+
 end
