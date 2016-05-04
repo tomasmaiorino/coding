@@ -800,6 +800,53 @@ class GameTest < Test::Unit::TestCase
 
 	end
 
+	#
+	# treat_destiny_towers
+	#
+	def test_treat_destiny_towers
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+		towers = []
+		game.towers.each{|k,v|
+			towers << v
+		}
+		circles = [game.game_circles[0]]
+		game.treat_destiny_towers towers, circles, false
+
+		assert_equal 3, game.towers[3].get_top_circle.size
+		assert_equal 3, game.game_circles[0].actual_tower.id
+
+		circles = [game.game_circles[1], game.game_circles[2]]
+
+		game.treat_destiny_towers towers, circles, false
+
+		assert_equal 2, game.towers[3].get_top_circle.size
+		assert_equal 3, game.game_circles[1].actual_tower.id
+
+	end
+
+	#
+	# contains_circles_by_size
+	#
+	def test_contains_circles_by_size
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+		circle = game.contains_circles_by_size(game.game_circles, 1)
+
+		assert_not_nil circle
+		assert_equal 1, circle.size
+		assert_equal 1, circle.actual_tower.id
+
+		circle = game.contains_circles_by_size(game.game_circles, 4)
+
+		assert_nil circle
+	end
+
 
 
 
