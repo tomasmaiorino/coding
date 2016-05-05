@@ -107,8 +107,9 @@ class Game
 			circles = get_availables_circles
 			if !circles.empty?
 				circles.each {|c|
+					# gel all avalailable towers from all game circles and the actual circle
 					towers = get_towers_available_from_circle get_all_towers_available, c
-					puts "towers size #{towers.size}"
+
 					#check first move
 					if Circle.moves_count == 0
 						empty_towers = get_all_tower_with_empty_circles(towers, true)
@@ -118,10 +119,15 @@ class Game
 							new_move
 						end
 					end
-					# treat the destiny tower
-					treat_destiny_towers towers, circles
 					# retrieve all empty towers
 					empty_towers = get_all_tower_with_empty_circles(get_all_towers_available, true)
+
+					towers_temp = towers.concat(empty_towers)
+					puts "towers size #{towers.size}"
+					puts "c #{c.size}"
+					# treat the destiny tower
+					treat_destiny_towers towers_temp, circles, true
+
 					destiny_tower = get_destiny_tower empty_towers
 					if !destiny_tower.nil?
 						destiny_tower_ind = empty_towers.index{|i| i.id == destiny_tower.id}
@@ -135,10 +141,12 @@ class Game
 								not_destiny.change_circle c
 								new_move
 						end
-					else
+					end
 						if !empty_towers.empty?
-							others_towers_with_more_than_circle = get_towers_with_more_than_one_circles(towers)
+							towers_temp = towers.concat(empty_towers)
+							others_towers_with_more_than_circle = get_towers_with_more_than_one_circles(towers_temp)
 							if !others_towers_with_more_than_circle.empty?
+								"puts more than one circle"
 									others_towers_with_more_than_circle.each{|t|
 										top_circle_ind = t.tower_circles.index {|x| x.size == c.size}
 										if !top_circle_ind.nil? && !get_destiny_tower(towers).tower_circles.empty?
@@ -158,9 +166,13 @@ class Game
 									new_move
 								end
 							end
+						else
+							new_towers = get_towers_with_smaller_circles towers
+							new_towers.actual_tower.change_circle c
+							new_move
+#							destiny_tower = get_destiny_tower towers
+
 						end
-						destiny_tower = get_destiny_tower towers
-					end
 				}
 			end
 		end
@@ -698,7 +710,6 @@ class Game
 		destiny_tower = get_destiny_tower towers
 		if !destiny_tower.nil?
 			temp_circle = contains_circles_by_size circles, @game_circles[0].size
-			puts "destiny_tower #{destiny_tower}"
 			if destiny_tower.tower_circles.empty? && !temp_circle.nil?
 				destiny_tower.change_circle temp_circle
 				new_move if move
