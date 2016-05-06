@@ -116,10 +116,6 @@ class Game
 						}					
 						treat_destiny_towers towers_temp_one, circles, true
 
-						if finished
-							return Circle.moves_count
-						end
-
 						if !empty_towers.empty? && towers.empty?
 							empty_towers[0].change_circle c
 							new_move
