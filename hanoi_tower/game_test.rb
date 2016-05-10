@@ -142,6 +142,10 @@ class GameTest < Test::Unit::TestCase
 		tower_3.change_circle(game.game_circles[1])
 		tower_3.change_circle(game.game_circles[2])
 		assert game.finished
+
+		assert 3 == tower_3.tower_circles[0].size
+		assert 2 == tower_3.tower_circles[1].size
+		assert 1 == tower_3.tower_circles[2].size
 	end
 
 	#
@@ -565,6 +569,314 @@ class GameTest < Test::Unit::TestCase
 		assert_equal 1, circles_temp[1].size
 
 	end
+
+	#
+	# get_destiny_tower
+	#
+	def test_get_destiny_tower
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+		destiny_tower = game.get_destiny_tower(game.towers)
+
+		assert_not_nil destiny_tower
+		assert_equal 3, destiny_tower.id
+
+		towers_length = 4
+		game = Game.new
+		circles = game.load_game(circles_length, towers_length)
+		destiny_tower = game.get_destiny_tower(game.towers)
+
+		assert_not_nil destiny_tower
+		assert_equal 4, destiny_tower.id
+	end
+
+	#
+	# get_all_tower_with_empty_circles
+	#
+	def test_get_all_tower_with_empty_circles
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+
+		towers = game.get_all_tower_with_empty_circles(game.towers, true)
+
+		assert_not_empty towers
+		assert_equal 2, towers.size
+		assert_equal 2, towers[0].id
+		assert_equal 3, towers[1].id
+
+		game.towers[2].change_circle game.game_circles[2]
+
+		towers = game.get_all_tower_with_empty_circles(game.towers, true)
+
+		assert_not_empty towers
+		assert_equal 1, towers.size
+		assert_equal 3, towers[0].id
+
+		towers = game.get_all_tower_with_empty_circles(game.towers, false)
+
+		assert_not_empty towers
+		assert_equal 2, towers.size
+		assert_equal 1, towers[0].id
+		assert_equal 2, towers[1].id
+
+	end
+
+	#
+	# get_towers_with_more_than_one_circles
+	#
+	def test_get_towers_with_more_than_one_circles
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+		towers = game.get_towers_with_more_than_one_circles(game.towers)
+
+		assert_not_empty towers
+		assert_equal 1, towers.size
+		assert_equal 1, towers[0].id
+
+		game.towers[2].change_circle game.game_circles[1]
+		game.towers[2].change_circle game.game_circles[2]
+
+		towers = game.get_towers_with_more_than_one_circles(game.towers)
+
+		assert_not_empty towers
+		assert_equal 1, towers.size
+		assert_equal 2, towers[0].id
+
+		game.towers[3].change_circle game.game_circles[2]
+
+		towers = game.get_towers_with_more_than_one_circles(game.towers)
+		assert_empty towers
+
+	end
+
+	#
+	# get_towers_available_from_circle
+	#
+	def test_get_towers_available_from_circle
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+		towers = game.get_all_towers_available
+
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[2])
+
+		assert_not_empty towers_temp
+		assert_equal 2, towers_temp.size
+		assert_equal 2, towers_temp[0].id
+		assert_equal 3, towers_temp[1].id
+
+		game.towers[2].change_circle game.game_circles[2]
+
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[1])
+
+		assert_empty towers_temp
+
+		game.towers[3].change_circle game.game_circles[1]
+
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[2])
+
+		assert_not_empty towers_temp
+		assert_equal 2, towers_temp.size
+		assert_equal 1, towers_temp[0].id
+		assert_equal 3, towers_temp[1].id
+
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[1])
+
+		assert_not_empty towers_temp
+		assert_equal 1, towers_temp.size
+		assert_equal 1, towers_temp[0].id
+
+		towers_temp = game.get_towers_available_from_circle(towers, game.game_circles[0])
+
+		assert_empty towers_temp
+
+	end
+
+	#
+	# get_availables_circles
+	#
+	def test_get_availables_circles
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 1, circles[0].size
+
+		game.towers[2].change_circle game.game_circles[2]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 2, circles[0].size
+
+		game.towers[3].change_circle game.game_circles[1]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 2, circles.size
+		assert_equal 1, circles[0].size
+		assert_equal 3, circles[1].size
+
+		game.towers[3].change_circle game.game_circles[2]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 3, circles[0].size
+
+		game.towers[2].change_circle game.game_circles[0]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 1, circles[0].size
+
+		game.towers[2].change_circle game.game_circles[2]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 2, circles[0].size
+
+		game.towers[1].change_circle game.game_circles[1]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 1, circles[0].size
+
+		game.towers[1].change_circle game.game_circles[2]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 3, circles[0].size
+
+		game.towers[3].change_circle game.game_circles[0]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 1, circles[0].size
+
+		game.towers[2].change_circle game.game_circles[2]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 2, circles[0].size
+
+		game.towers[3].change_circle game.game_circles[1]
+
+		circles = game.get_availables_circles
+
+		assert_not_empty circles
+		assert_equal 1, circles.size
+		assert_equal 1, circles[0].size
+
+	end
+
+	#
+	# treat_destiny_towers
+	#
+	def test_treat_destiny_towers
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+		towers = []
+		game.towers.each{|k,v|
+			towers << v
+		}
+		circles = [game.game_circles[0]]
+		game.treat_destiny_towers towers, circles, false
+
+		assert_equal 3, game.towers[3].get_top_circle.size
+		assert_equal 3, game.game_circles[0].actual_tower.id
+
+		circles = [game.game_circles[1], game.game_circles[2]]
+
+		game.treat_destiny_towers towers, circles, false
+
+		assert_equal 2, game.towers[3].get_top_circle.size
+		assert_equal 3, game.game_circles[1].actual_tower.id
+
+	end
+
+	#
+	# contains_circles_by_size
+	#
+	def test_contains_circles_by_size
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+		circle = game.contains_circles_by_size(game.game_circles, 1)
+
+		assert_not_nil circle
+		assert_equal 1, circle.size
+		assert_equal 1, circle.actual_tower.id
+
+		circle = game.contains_circles_by_size(game.game_circles, 4)
+
+		assert_nil circle
+	end
+
+	#
+	# get_next_tower_available_from_under_circle
+	#
+	def test_get_next_tower_available_from_under_circle
+		circles_length = 3
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+		game.towers[3].change_circle game.game_circles[0]
+		game.towers[2].change_circle game.game_circles[1]
+		game.towers[2].change_circle game.game_circles[2]
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[2])
+		assert_not_nil tower
+		assert_equal 3, tower.id
+
+		game.towers[1].change_circle game.game_circles[0]
+		game.towers[3].change_circle game.game_circles[1]
+		game.towers[3].change_circle game.game_circles[2]
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[2])
+		assert_not_nil tower
+		assert_equal 1, tower.id
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[1])
+		assert_nil tower
+	end
+
+
 
 
 
