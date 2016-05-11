@@ -58,6 +58,125 @@ class Game
      return towers
  end
 
+	def new_move
+		#put the first circle into destiny tower
+	  if Circle.moves_count == 0
+	 	 destiny_tower = get_destiny_tower get_all_towers_available
+	 	 destiny_tower.change_circle game_circles[game_circles.size - 1]
+	 	 #new_move
+	  end
+
+		is_finished = finished
+
+		while !is_finished
+			#retrrieve all circles availables
+			circles = get_availables_circles
+			if !circles.empty?
+				circles.each{|c|
+					#check if there is circle that has not been moved
+					if Circle.moves_count > 4 && game_circles.size > 4
+						circles.each{|c_2|
+							if c_2.never_played
+								c = c_2
+								break
+							end
+						}
+					end
+					# gel all avalailable towers from all game circles and the actual circle
+					towers = get_towers_available_from_circle get_all_towers_available, c
+					# retrieve all empty towers
+					empty_towers = get_all_tower_with_empty_circles(get_all_towers_available, true)
+					towers_temp_one = []
+					#concat all towers content
+					towers.each{ |t|
+						towers_temp_one << t
+					}
+					empty_towers.each{ |t|
+						towers_temp_one << t
+					}
+					#treat the destiny tower
+					is_circle_changed = treat_destiny_towers towers_temp_one, circles, false
+
+					if is_circle_changed
+						is_finished = finished
+						next
+					end
+
+					if !empty_towers.empty? && towers.empty?
+						# order the empty_towers by id
+						empty_towers = empty_towers.sort! { |a, b|
+							b.id <=> a.id
+						}
+						empty_towers[0].change_circle(c)
+					elsif empty_towers.empty? && !towers.empty?
+						#check if the current circle is in a tower with more than one circle
+						actual_circle_tower = c.actual_tower
+						if actual_circle_tower.tower_circles.size > 1
+							# check if the circle under the top circle can fit exacly on any other tower
+							tmp_tower = get_next_tower_available_from_under_circle(@towers, c, true)
+							tmp_tower = get_next_tower_available_from_under_circle(@towers, c, false) if tmp_tower == nil
+							if !tmp_tower.nil?
+								towers.each{|t|
+									if t.id != tmp_tower
+										#set the top circle in any tower but tmp_tower
+										puts "doing double call"
+										t.change_circle c
+										tmp_tower.change_circle actual_circle_tower.get_top_circle
+										break
+									end
+								}
+							else
+								#look for a tower where the actual  circle can fit on any tower
+								#order the towers by circles size
+								towers =  towers.sort! { |a, b|
+									a.get_top_circle.size <=> b.get_top_circle.size
+								}
+								towers[0].change_circle c
+							end
+						else
+							#look for a tower where the actual  circle can fit on any tower
+							#order the towers by circles size
+							towers =  towers.sort! { |a, b|
+								a.get_top_circle.size <=> b.get_top_circle.size
+							}
+							towers[0].change_circle c
+						end
+					# there are both empty_tower and not empty_tower
+					else
+						#check if the current circle is in a tower with more than one circle
+						actual_circle_tower = c.actual_tower
+						if actual_circle_tower.tower_circles.size > 1
+							# check if the circle under the top circle can fit exacly on any other tower
+							tmp_tower = get_next_tower_available_from_under_circle(@towers, c, true)
+							tmp_tower = get_next_tower_available_from_under_circle(@towers, c, false) if tmp_tower == nil
+							if !tmp_tower.nil?
+								empty_towers[0].change_circle c
+								tmp_tower.change_circle actual_circle_tower.get_top_circle
+							else
+								empty_towers[0].change_circle c
+							end
+						else
+							#to give  preference to destiny tower
+							if !get_destiny_tower(towers).nil?
+								empty_towers[0].change_circle c
+								#new_move
+							else
+								new_towers =  towers.sort! { |a, b|
+									a.get_top_circle.size <=> b.get_top_circle.size
+								}
+								new_towers[0].change_circle c
+							end
+						end
+					end
+					#check if the game is over
+					is_finished = finished
+				}
+			end
+		end
+		return Circle.moves_count
+	end
+
+
 	 def move
 	 	#put the first circle into destiny tower
 		if Circle.moves_count == 0
@@ -199,8 +318,7 @@ class Game
 		return Circle.moves_count
 	 end
 
-	 # to test
-	 def get_next_tower_available_from_under_circle(towers, circle)
+	 def get_next_tower_available_from_under_circle(towers, circle, match_size)
 
 		actual_circle_tower = circle.actual_tower
 		towers_def = []
@@ -213,11 +331,17 @@ class Game
 			}
 		end
 
-	 	if actual_circle_tower.tower_circles.size > 1 && actual_circle_tower.get_top_circle == circle.size
+	 	if actual_circle_tower.tower_circles.size > 1 && actual_circle_tower.get_top_circle.size == circle.size
 			under_circle = actual_circle_tower.tower_circles[actual_circle_tower.tower_circles.size - 2]
 			towers_def.each{|t|
-				if !t.get_top_circle.nil? && t.get_top_circle.size == under_circle.size + 1
-					return t
+				if match_size
+					if !t.get_top_circle.nil? && t.get_top_circle.size == under_circle.size + 1
+						return t
+					end
+				else
+					if !t.get_top_circle.nil? && t.get_top_circle.size > under_circle.size
+						return t
+					end
 				end
 			}
 		end
@@ -582,5 +706,4 @@ class Game
 		end
 		return is_circle_changed
 	end
-
 end
