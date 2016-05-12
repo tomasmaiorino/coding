@@ -185,4 +185,33 @@ class CircleTest < Test::Unit::TestCase
 		assert !circles[1].biggest_one(circles[0])
 		assert !circles[2].biggest_one(circles[0])
 	end
+
+	#
+	# is_at_top
+	#
+	def test_is_at_top
+		tower_qtd = 3
+		tower = Tower.new(1, tower_qtd)
+		tower_2 = Tower.new(2, tower_qtd)
+		tower_3 = Tower.new(3, tower_qtd)
+
+		circle_3 = Circle.new(3, tower, nil)
+		circle_2 = Circle.new(2, tower, nil)
+		circle_1 = Circle.new(1, tower, nil)
+
+		tower.tower_circles = [circle_3, circle_2, circle_1]
+
+		assert circle_1.is_at_top
+		assert !circle_2.is_at_top
+		assert !circle_3.is_at_top
+
+		tower_2.change_circle circle_1
+
+		assert circle_1.is_at_top
+		assert circle_2.is_at_top
+		assert !circle_3.is_at_top
+
+	end
+
+
 end

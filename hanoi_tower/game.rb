@@ -71,6 +71,8 @@ class Game
 		while !is_finished
 			#retrrieve all circles availables
 			circles = get_availables_circles
+			puts "circles #{circles.size}"
+#			puts "circles #{circles}"
 			if !circles.empty?
 				circles.each{|c|
 					#check if there is circle that has not been moved
@@ -107,6 +109,7 @@ class Game
 						empty_towers = empty_towers.sort! { |a, b|
 							b.id <=> a.id
 						}
+						break unless c.is_at_top
 						empty_towers[0].change_circle(c)
 					elsif empty_towers.empty? && !towers.empty?
 						#check if the current circle is in a tower with more than one circle
@@ -148,8 +151,9 @@ class Game
 						if actual_circle_tower.tower_circles.size > 1
 							# check if the circle under the top circle can fit exacly on any other tower
 							tmp_tower = get_next_tower_available_from_under_circle(@towers, c, true)
-							tmp_tower = get_next_tower_available_from_under_circle(@towers, c, false) if tmp_tower == nil
+							#tmp_tower = get_next_tower_available_from_under_circle(@towers, c, false) if tmp_tower == nil
 							if !tmp_tower.nil?
+								#check if should change to empty or not
 								empty_towers[0].change_circle c
 								tmp_tower.change_circle actual_circle_tower.get_top_circle
 							else
@@ -169,6 +173,7 @@ class Game
 						end
 					end
 					#check if the game is over
+					puts "checking"
 					is_finished = finished
 				}
 			end
@@ -347,6 +352,8 @@ class Game
 		end
 		return nil
 	 end
+
+
 
 =begin
 	def new_move
