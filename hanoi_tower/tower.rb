@@ -30,7 +30,8 @@ class Tower
 
 		if !get_top_circle.nil?
 			if circle.size > get_top_circle.size
-				raise ArgumentError, "Circle size must be smaller than top circle #{get_bottom_circle.size} tower(#{@id})"
+				puts "Circle size must be smaller than top circle #{get_top_circle.size} tower(#{@id})"
+				raise ArgumentError, "Circle size must be smaller than top circle #{get_top_circle.size} tower(#{@id})"
 			end
 		end
 		circle_removed = circle.actual_tower.remove_circle(circle)
