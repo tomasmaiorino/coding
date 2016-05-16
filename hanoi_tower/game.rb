@@ -58,6 +58,7 @@ class Game
      return towers
  end
 
+
 	def new_move
 		#put the first circle into destiny tower
 	  if Circle.moves_count == 0
@@ -88,7 +89,7 @@ class Game
 					towers = get_towers_available_from_circle get_all_towers_available, c
 					# retrieve all empty towers
 					empty_towers = get_all_tower_with_empty_circles(get_all_towers_available, true)
-					towers_temp_one = []
+	 				towers_temp_one = []
 					#concat all towers content
 					towers.each{ |t|
 						towers_temp_one << t
@@ -124,7 +125,9 @@ class Game
 										#set the top circle in any tower but tmp_tower
 										puts "doing double call"
 										t.change_circle c
-										tmp_tower.change_circle actual_circle_tower.get_top_circle
+										if tmp_tower.id != c.actual_tower.id
+											tmp_tower.change_circle actual_circle_tower.get_top_circle										
+										end
 										break
 									end
 								}
