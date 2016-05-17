@@ -59,6 +59,16 @@ def get_all_towers_available
 	 return towers
  end
 
+ def new_move_2
+ 	#check if it is the first move, if it true, move the first circle to last tower
+
+ 	# if the game is not finished,
+ 	#retrieve all availables circles ( a circle will be available if it wasn't move on the last move and if among all towers, one of them have bigger circles)
+
+ 	#get all available towers through a specific circle
+ 	# get all empty towers available
+ end
+
 	def new_move
 		#put the first circle into destiny tower
 	  if Circle.moves_count == 0
