@@ -1,40 +1,41 @@
 class Game
 
 	attr_accessor :actual_move, :towers, :game_circles
-  def initialize
-    @game_circles = []
-    @towers = {}
-    @actual_move = 0
-  end
+  	
+  	def initialize
+		@game_circles = []
+		@towers = {}
+		@actual_move = 0
+	end
 
-  def load_towers(towers)
-    for i in 0..towers - 1
-      @towers[i +1] = Tower.new(i + 1, towers)
-    end
-    @towers = Hash[@towers.sort_by{|k, v| v.id}]
-    return @towers
-  end
+	def load_towers(towers)
+		for i in 0..towers - 1
+	 		@towers[i +1] = Tower.new(i + 1, towers)
+		end
+		@towers = Hash[@towers.sort_by{|k, v| v.id}]
+		return @towers
+	end
 
   def load_game(circles, towers)
-    @towers = load_towers(towers)
-    for i in 0..circles - 1
-      @game_circles << Circle.new(i + 1, @towers[1], nil)
-    end
-    #order circles
-    #@circles.sort {|left, right| left.size <=> right.size}
+	@towers = load_towers(towers)
+	for i in 0..circles - 1
+	  @game_circles << Circle.new(i + 1, @towers[1], nil)
+	end
+	#order circles
+	#@circles.sort {|left, right| left.size <=> right.size}
 		#add the circles into the initial tower
 		@game_circles.each{|v|
 			v.actual_tower = @towers[1]
 			@towers[1].tower_circles << v
 		}
 		circles_ret = @game_circles.sort! { |a,b| b.size <=> a.size }
-    return circles_ret
+	return circles_ret
   end
 
   def get_next_empty_tower(towers)
-    towers.each {|key, value|
-      return value if value.tower_circles.empty?
-    }
+	towers.each {|key, value|
+	  return value if value.tower_circles.empty?
+	}
 		return nil
   end
 
@@ -50,21 +51,20 @@ class Game
 		return circles.sort {|a,b| a.size <=> b.size}
 	end
 
-	def get_all_towers_available
-     towers = []
-     @towers.each {|key, value|
-        towers << value
-     }
-     return towers
+def get_all_towers_available
+	 towers = []
+	 @towers.each {|key, value|
+		towers << value
+	 }
+	 return towers
  end
-
 
 	def new_move
 		#put the first circle into destiny tower
 	  if Circle.moves_count == 0
-	 	 destiny_tower = get_destiny_tower get_all_towers_available
-	 	 destiny_tower.change_circle game_circles[game_circles.size - 1]
-	 	 #new_move
+		 destiny_tower = get_destiny_tower get_all_towers_available
+		 destiny_tower.change_circle game_circles[game_circles.size - 1]
+		 #new_move
 	  end
 
 		is_finished = finished
@@ -89,7 +89,7 @@ class Game
 					towers = get_towers_available_from_circle get_all_towers_available, c
 					# retrieve all empty towers
 					empty_towers = get_all_tower_with_empty_circles(get_all_towers_available, true)
-	 				towers_temp_one = []
+					towers_temp_one = []
 					#concat all towers content
 					towers.each{ |t|
 						towers_temp_one << t
@@ -125,10 +125,9 @@ class Game
 										#set the top circle in any tower but tmp_tower
 										puts "doing double call"
 										t.change_circle c
-										if tmp_tower.id != c.actual_tower.id
-											tmp_tower.change_circle actual_circle_tower.get_top_circle										
-										end
 										break
+										#tmp_tower.change_circle actual_circle_tower.get_top_circle
+										#break
 									end
 								}
 							else
@@ -148,7 +147,7 @@ class Game
 							towers[0].change_circle c
 						end
 					# there are both empty_tower and not empty_tower
-					else
+					elsif !empty_towers.empty? && !towers.empty?
 						#check if the current circle is in a tower with more than one circle
 						actual_circle_tower = c.actual_tower
 						if actual_circle_tower.tower_circles.size > 1
@@ -186,7 +185,7 @@ class Game
 
 
 	 def move
-	 	#put the first circle into destiny tower
+		#put the first circle into destiny tower
 		if Circle.moves_count == 0
 			destiny_tower = get_destiny_tower get_all_towers_available
 			destiny_tower.change_circle game_circles[game_circles.size - 1]
@@ -194,8 +193,8 @@ class Game
 		end
 		is_finished = finished
 
-	 	while !is_finished
-	 		#retrrieve all circles availables
+		while !is_finished
+			#retrrieve all circles availables
 			circles = get_availables_circles
 			if !circles.empty?
 				circles.each {|c|
@@ -311,8 +310,8 @@ class Game
 				end
 				}
 			end
-		 	is_finished = finished
-		 	puts "is_finished #{is_finished}"
+			is_finished = finished
+			puts "is_finished #{is_finished}"
 		 end
 		puts "-------------- FINISHED ----------------"
 		puts "TOTAL MOVEMENTS: #{Circle.moves_count}"
@@ -339,7 +338,7 @@ class Game
 			}
 		end
 
-	 	if actual_circle_tower.tower_circles.size > 1 && actual_circle_tower.get_top_circle.size == circle.size
+		if actual_circle_tower.tower_circles.size > 1 && actual_circle_tower.get_top_circle.size == circle.size
 			under_circle = actual_circle_tower.tower_circles[actual_circle_tower.tower_circles.size - 2]
 			towers_def.each{|t|
 				if match_size
@@ -357,120 +356,6 @@ class Game
 	 end
 
 
-
-=begin
-	def new_move
-		v_finished = finished
-		if v_finished
-			puts "--------- FINISHED -----------"
-			puts "TOTAL MOVEMENTS: #{Circle.moves_count}"
-			destiny_tower = get_destiny_tower(@towers)
-			puts "Tower #{destiny_tower.id}"
-			destiny_tower.tower_circles.each_with_index{| c, i|
-				print	"Circle #{c.size} "
-			}
-			puts ""
-			puts "------------------------------"
-			return Circle.moves_count
-		else
-			#puts "Move count: #{Circle.moves_count}"
-			#first move
-			if Circle.moves_count == 0
-					destiny_tower = get_destiny_tower get_all_towers_available
-					destiny_tower.change_circle game_circles[game_circles.size - 1]
-					new_move
-			end
-			if !v_finished
-				circles = get_availables_circles
-				if !circles.empty?
-					circles.each {|c|
-						if Circle.moves_count > 4
-							circles.each{|c_2|
-								if c_2.never_played
-									c = c_2
-									break
-								end
-							}
-						end
-						# gel all avalailable towers from all game circles and the actual circle
-						towers = get_towers_available_from_circle get_all_towers_available, c
-						# retrieve all empty towers
-						empty_towers = get_all_tower_with_empty_circles(get_all_towers_available, true)
-						towers_temp_one = []
-
-						towers.each{ |t|
-							towers_temp_one << t
-						}
-						empty_towers.each{ |t|
-							towers_temp_one << t
-						}
-						treat_destiny_towers towers_temp_one, circles, true
-
-						if !empty_towers.empty? && towers.empty?
-							empty_towers[0].change_circle c
-							new_move
-						elsif empty_towers.empty? && !towers.empty?
-							tower_to_ignore = nil
-							actual_tower = c.actual_tower
-							if c.actual_tower.tower_circles.size > 1 #1
-								get_all_towers_available.each {|t_2|
-									if actual_tower.tower_circles[actual_tower.tower_circles.size - 2].size == t_2.get_top_circle.size - 1
-										tower_to_ignore = t_2
-										break
-									end
-								}
-							end
-							new_towers =  towers.sort! { |a, b|
-								a.get_top_circle.size <=> b.get_top_circle.size
-							}
-							if !tower_to_ignore.nil?
-								puts "tower_to_ignore #{tower_to_ignore}"
-								new_towers.each{|t|
-									if t.id != tower_to_ignore
-										t.change_circle c
-										puts "adding"
-										tower_to_ignore.change_circle actual_tower.get_top_circle
-									end
-								}
-							else
-								new_towers[0].change_circle c
-							end
-							new_move
-						else
-							if c.actual_tower.tower_circles.size > 1 #1
-								actual_tower = c.actual_tower
-								destiny_tower = get_destiny_tower get_all_towers_available
-								if !destiny_tower.nil? && !destiny_tower.tower_circles.empty?
-									if actual_tower.tower_circles[actual_tower.tower_circles.size - 2].size == destiny_tower.get_top_circle.size - 1
-										empty_towers[0].change_circle c
-										destiny_tower.change_circle actual_tower.get_top_circle
-										new_move
-									end
-								end
-							else #else 1
-								if !get_destiny_tower(towers).nil?
-									empty_towers[0].change_circle c
-									new_move
-								else
-									new_towers =  towers.sort! { |a, b|
-										a.get_top_circle.size <=> b.get_top_circle.size
-									}
-									new_towers[0].change_circle c
-									new_move
-								end
-							end #end 1
-							new_towers =  towers.sort! { |a, b|
-								a.get_top_circle.size <=> b.get_top_circle.size
-							}
-							new_towers[0].change_circle c
-							new_move
-						end
-					}
-				end
-			end
-		end
-	end
-=end
 	def get_circle_from_circles_by_size(circles, size)
 		if !circles.nil? && !circles.empty?
 			circles.each { |e|
@@ -701,7 +586,8 @@ class Game
 			if destiny_tower.tower_circles.empty? && !temp_circle.nil?
 				destiny_tower.change_circle temp_circle
 				is_circle_changed = true
-				new_move if move
+				#des
+				#new_move if move
 			else
 				if !destiny_tower.tower_circles.empty?
 					next_size = destiny_tower.get_top_circle.size - 1
@@ -709,7 +595,7 @@ class Game
 					if !circle.nil?
 						destiny_tower.change_circle circle
 						is_circle_changed = true
-						new_move if move
+				#		new_move if move
 					end
 				end
 			end
