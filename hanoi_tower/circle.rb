@@ -62,4 +62,8 @@ class Circle
 	def last_moved
 		@circle_last_move == @@moves_count
 	end
+
+	def is_at_top
+		!actual_tower.nil? && !actual_tower.get_top_circle.nil? && actual_tower.get_top_circle.size == @size
+	end
 end

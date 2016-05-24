@@ -847,6 +847,56 @@ class GameTest < Test::Unit::TestCase
 		assert_nil circle
 	end
 
+<<<<<<< HEAD
+=======
+	#
+	# get_next_tower_available_from_under_circle
+	#
+	def test_get_next_tower_available_from_under_circle
+		circles_length = 4
+		towers_length = 3
+		game = Game.new
+		game.load_game(circles_length, towers_length)
+
+		game.towers[3].change_circle game.game_circles[0]
+		game.towers[2].change_circle game.game_circles[1]
+		game.towers[2].change_circle game.game_circles[2]
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[2], true)
+		assert_not_nil tower
+		assert_equal 3, tower.id
+
+		game.towers[1].change_circle game.game_circles[0]
+		game.towers[3].change_circle game.game_circles[1]
+		game.towers[3].change_circle game.game_circles[2]
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[2], true)
+		assert_not_nil tower
+		assert_equal 1, tower.id
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[1], true)
+		assert_nil tower
+
+		game.towers[2].change_circle game.game_circles[2]
+		game.towers[1].change_circle game.game_circles[0]
+		game.towers[3].change_circle game.game_circles[1]
+		game.towers[3].change_circle game.game_circles[3]
+
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[3], false)
+		assert_not_nil tower
+		assert_equal 1, tower.id
+
+		game.towers[1].change_circle game.game_circles[0]
+		game.towers[1].change_circle game.game_circles[3]
+		game.towers[2].change_circle game.game_circles[1]
+		game.towers[3].change_circle game.game_circles[2]
+
+		tower = game.get_next_tower_available_from_under_circle(game.towers, game.game_circles[3], false)
+		assert_nil tower
+	end
+
+>>>>>>> 98990f10da439066cebbf87a43249db2f92c279f
 
 
 
