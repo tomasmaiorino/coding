@@ -306,10 +306,185 @@ class NewGameTest < Test::Unit::TestCase
 		circles_temp = [circles[2], circles[0]]
 		move =  game.treat_destiny_towers(game.towers, circles_temp)
 		assert_not_nil move
-		assert_equal 3, move.tower.id
+		assert_equal 4, move.tower.id
+		assert_equal 4, move.circle.size
+
+		game.towers[4].change_circle circles[0]
+		circles_temp = [circles[3], circles[1]]
+		move =  game.treat_destiny_towers(game.towers, circles_temp)
+
+		assert_not_nil move
+		assert_equal 4, move.tower.id
 		assert_equal 3, move.circle.size
+
+		game.towers[4].change_circle circles[1]
+		circles_temp = [circles[3], circles[2]]
+		move =  game.treat_destiny_towers(game.towers, circles_temp)
+
+		assert_not_nil move
+		assert_equal 4, move.tower.id
+		assert_equal 2, move.circle.size
 
 	end
 
+	#
+	# get_next_move
+	#
+	def test_get_next_move
+		circles_length = 4
+		towers_length = 4
+		game = NewGame.new
+		circles = game.load_game(circles_length, towers_length)
+
+		game.towers[1].change_circle(circles[0])
+		game.towers[1].change_circle(circles[1])
+
+		game.towers[2].change_circle(circles[2])
+		game.towers[2].change_circle(circles[3])
+		
+		#first set
+		move = game.get_next_move(circles[3], circles)
+
+		assert_not_nil move
+		assert_equal 1, move.next_tower.id
+		assert_equal 2, move.next_circle.size
+		assert_equal move.next_tower.get_top_circle.size - 1, move.next_circle.size
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_not_nil move.game
+
+		#second set
+		game.towers[4].change_circle(circles[1])
+		
+		move = game.get_next_move(circles[3], circles)
+
+		assert_not_nil move
+		assert_equal 4, move.next_tower.id
+		assert_equal 2, move.next_circle.size
+		assert_equal move.next_tower.get_top_circle.size - 1, move.next_circle.size
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_not_nil move.game
+
+		#third set
+		game.towers[4].change_circle(circles[1])
+		game.towers[4].change_circle(circles[3])
+				
+		move = game.get_next_move(circles[3], circles)
+
+		assert_not_nil move
+		assert_equal 1, move.next_tower.id
+		assert_equal 3, move.next_circle.size
+		assert_equal move.next_tower.get_top_circle.size - 1, move.next_circle.size
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_not_nil move.game
+
+		#fourth set		
+		game.towers[3].change_circle(circles[0])
+		game.towers[3].change_circle(circles[1])
+		game.towers[3].change_circle(circles[2])
+		game.towers[3].change_circle(circles[3])
+
+		
+		game.towers[4].change_circle(circles[0])
+		game.towers[4].change_circle(circles[2])
+		game.towers[4].change_circle(circles[3])
+		
+				
+		move = game.get_next_move(circles[3], circles)
+
+		assert_not_nil move
+		assert_equal 3, move.next_tower.id
+		assert_equal 2, move.next_circle.size
+		assert_equal move.next_tower.get_top_circle.size - 1, move.next_circle.size
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_not_nil move.game
+
+	end
+
+	#
+	# get_next_tower_with_closest_circle
+	#
+	def test_get_next_tower_with_closest_circle
+		circles_length = 4
+		towers_length = 4
+		game = NewGame.new
+		circles = game.load_game(circles_length, towers_length)
+
+		#first set
+		towers = game.get_next_tower_with_closest_circle(game.towers, game.game_circles[4])
+
+		assert_empty towers
+
+		#second set
+		game.towers[2].change_circle circles[3]
+		towers = game.get_next_tower_with_closest_circle(game.towers, circles[3])
+
+		assert_not_empty towers
+		assert_equal 1, towers[0].id
+		assert_equal 1, towers.size
+
+		#third set
+		game.towers[2].change_circle circles[3]
+		game.towers[3].change_circle circles[2]
+
+		towers = game.get_next_tower_with_closest_circle(game.towers, circles[3])
+
+		assert_not_empty towers
+		assert_equal 3, towers[0].id
+		assert_equal 2, towers.size
+
+		#fourth set
+		game.towers[2].change_circle circles[3]
+		game.towers[3].change_circle circles[2]
+
+		towers = game.get_next_tower_with_closest_circle(game.towers, circles[2])
+
+		assert_not_empty towers
+		assert_equal 1, towers[0].id
+		assert_equal 1, towers.size
+
+
+		#fourth set
+		game.towers[2].change_circle circles[3]
+		game.towers[3].change_circle circles[2]
+		game.towers[4].change_circle circles[1]
+
+		towers = game.get_next_tower_with_closest_circle(game.towers, circles[2])
+
+		assert_not_empty towers
+		assert_equal 4, towers[0].id
+		assert_equal 1, towers[1].id
+		assert_equal 2, towers.size
+
+		#fifth set
+		towers = game.get_next_tower_with_closest_circle(game.towers, circles[3])
+
+		assert_not_empty towers
+		assert_equal 3, towers[0].id
+		assert_equal 4, towers[1].id
+		assert_equal 1, towers[2].id
+		assert_equal 3, towers.size
+
+		#sixth set
+		towers = game.get_next_tower_with_closest_circle(game.towers, circles[1])
+
+		assert_not_empty towers
+		assert_equal 1, towers[0].id
+		assert_equal 1, towers.size
+
+		#sevenh set
+		game.towers[3].change_circle circles[3]
+		towers = game.get_next_tower_with_closest_circle(game.towers, circles[3])
+
+		assert_not_empty towers
+		assert_equal 4, towers[0].id
+		assert towers[0].get_top_circle.size > circles[3].size
+		assert_equal 1, towers[1].id
+		assert_equal 2, towers.size
+
+	end
 
 end

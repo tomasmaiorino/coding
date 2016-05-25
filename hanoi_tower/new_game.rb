@@ -1,3 +1,5 @@
+require_relative 'move'
+
 class NewGame
 
 	attr_accessor :actual_move, :towers, :game_circles
@@ -58,8 +60,7 @@ class NewGame
 		move = nil
 		if Circle.moves_count == 0
 			destiny_tower = get_destiny_tower get_all_towers_available
-			#destiny_tower.change_circle game_circles[game_circles.size - 1]
-			move = new Move(destiny_tower, game_circles[game_circles.size - 1], self)
+			move = new Move(destiny_tower, game_circles[game_circles.size - 1], nil, nil, self)
 			return move
 		end
 		circles = get_availables_circles
@@ -80,19 +81,69 @@ class NewGame
 					move = treat_destiny_towers towers_temp_one, circles, true
 					return move unless move.nil?
 					#get the last tower as destination tower
-					if !empty_towers.empty? && !towers.empty?
+					if !empty_towers.empty? && towers.empty?
 						#configure the move and return it
 						move = new Move(empty_towers[empty_towers.size - 1], c)
 						return move
-					elsif empty_towers.empty? && towers.empty?
-						move = get_move_from_towers(empty_towers. towers, c)
+					elsif empty_towers.empty? && !towers.empty?
+						move = get_next_tower_with_closest_circle(get_all_towers_available, c)
+						tower_temp = get_next_tower_with_closest_circle get_availables_circles, c
+						if !move.next_tower.nil? && move.next_tower.id == tower_temp.id
+							move.next_tower = nil
+							move.next_circle = nil
+						elsif
+						end
+							
 					else
-						move = get_move_from_towers(empty_towers. towers, c)
-					end
+						move = get_next_tower_with_closest_circle(get_all_towers_available, c)
+					end	
+
 					return move
 				}
 		end
+	end
 
+	#ok
+	def get_next_move(c, circles)
+		actual_tower = c.actual_tower
+		move = nil
+		if actual_tower.tower_circles.size > 1
+			get_all_towers_available.each {|t_2|
+			if  !t_2.get_top_circle.nil? && actual_tower.tower_circles[actual_tower.tower_circles.size - 2].size == t_2.get_top_circle.size - 1
+				move = Move.new(nil, nil, t_2, actual_tower.tower_circles[actual_tower.tower_circles.size - 2], self)
+				return move
+			end
+			}
+		end
+		return move
+	end
+
+	#ok
+	def get_next_tower_with_closest_circle(p_towers, circle)
+		new_towers = []
+		towers = []
+
+		return towers if  p_towers.empty? || circle.nil?
+
+		if !p_towers.kind_of?(Array)
+			p_towers.each{|key, value|
+				new_towers << value
+			}
+		end
+
+		new_towers = p_towers if p_towers.kind_of?(Array)
+				
+		new_towers.each{|t|
+			if !t.get_top_circle.nil? && t.get_top_circle.size > circle.size
+				towers << t
+			end
+		}
+
+		towers.sort! { |a, b|
+			a.get_top_circle.size <=> b.get_top_circle.size
+		}
+
+		return towers
 	end
 
 	#ok
@@ -221,20 +272,20 @@ class NewGame
 	return towers_temp
 	end
 
-
+	#ok
 	def treat_destiny_towers(towers, circles)
 		destiny_tower = get_destiny_tower towers
 		if !destiny_tower.nil?
 			temp_circle = contains_circles_by_size circles, @game_circles[0].size
 			if destiny_tower.tower_circles.empty? && !temp_circle.nil?
-				move = Move.new destiny_tower, temp_circle, nil, nil, nil, nil
+				move = Move.new(destiny_tower, temp_circle, nil, nil, nil)
 				return move
 			else
 				if !destiny_tower.tower_circles.empty?
 					next_size = destiny_tower.get_top_circle.size - 1
 					circle = contains_circles_by_size circles, next_size
 					if !circle.nil?
-						move = Move.new(destiny_tower, circle, self)
+						move = Move.new(destiny_tower, circle, nil, nil, self)
 						return move
 						#destiny_tower.change_circle circle
 						#is_circle_changed = true
