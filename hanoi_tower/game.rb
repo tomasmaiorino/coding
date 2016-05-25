@@ -648,6 +648,7 @@ def get_all_towers_available
 		return finished
 	end
 
+	#ok
 	def get_all_top_circles
 		circles = []
 		@towers.each {|key, value|

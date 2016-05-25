@@ -1,9 +1,37 @@
 class NewGame
 
-	attr_accessor :actual_move, :towers, :game_circles  	
+	attr_accessor :actual_move, :towers, :game_circles
+
+  	def initialize
 		@game_circles = []
 		@towers = {}
 		@actual_move = 0
+	end
+
+	#ok
+	def load_towers(towers)
+		for i in 0..towers - 1
+	 		@towers[i +1] = Tower.new(i + 1, towers)
+		end
+		@towers = Hash[@towers.sort_by{|k, v| v.id}]
+		return @towers
+	end
+
+	#ok
+	def load_game(circles, towers)
+		@towers = load_towers(towers)
+		for i in 0..circles - 1
+		  @game_circles << Circle.new(i + 1, @towers[1], nil)
+		end
+		#order circles
+		#@circles.sort {|left, right| left.size <=> right.size}
+			#add the circles into the initial tower
+			@game_circles.each{|v|
+				v.actual_tower = @towers[1]
+				@towers[1].tower_circles << v
+			}
+		circles_ret = @game_circles.sort! { |a,b| b.size <=> a.size }
+		return circles_ret
 	end
 
 	def move(move)
@@ -67,6 +95,7 @@ class NewGame
 
 	end
 
+	#ok
 	def get_all_towers_available
      	towers = []
      	@towers.each {|key, value|
@@ -75,6 +104,7 @@ class NewGame
     	return towers
  	end
 
+ 	#ok
 	def get_destiny_tower(towers)
 		tower = nil
 		if towers.kind_of?(Array)
@@ -95,6 +125,7 @@ class NewGame
 		return tower
 	end
 
+	#ok
 	def do_get_availables_circles(ignore_last_moved)
 		circles = []
 		get_all_top_circles.each {|v|
@@ -107,7 +138,7 @@ class NewGame
 		# remove the circles that are on the his final position
 		destiny_tower = get_destiny_tower (@towers)
 		ind_to_remove = []
-		# 1 - the destiny tower must have biggest game circle
+		# 1 - the destiny tower has the biggest game circle
 		if destiny_tower.tower_circles.index {|x| @game_circles[0].size == x.size} != nil
 			#puts "has biggest at destiny_tower"
 			circles.each_with_index{|c, i|
@@ -134,21 +165,31 @@ class NewGame
 		return circles
 	end
 
+	#ok
 	def get_availables_circles
-			circles = do_get_availables_circles(true)
-			if circles.empty?
-				circles = do_get_availables_circles(false)
-			end
-			return circles.sort {|a,b| a.size <=> b.size}
+		circles = do_get_availables_circles(true)
+		if circles.empty?
+			circles = do_get_availables_circles(false)
+		end
+		return circles.sort {|a,b| a.size <=> b.size}
 	end
 
+	#ok
 	def get_towers_available_from_circle(p_towers, circle)
 		towers = []
-		p_towers.each{ |t|
-			if !t.tower_circles.empty?
-				towers << t if t.get_top_circle.size > circle.size
-			end
-		}
+		if p_towers.kind_of?(Array)		
+			p_towers.each{ |t|
+				if !t.tower_circles.empty?
+					towers << t if t.get_top_circle.size > circle.size
+				end
+			}
+		else
+			p_towers.each{|key, value|
+				if !value.tower_circles.empty?
+					towers << value if value.get_top_circle.size > circle.size
+				end
+			}
+		end
 		if !towers.empty?
 			towers = towers.sort! { |a, b|
 				b.get_top_circle.size <=> a.get_top_circle.size
@@ -157,6 +198,7 @@ class NewGame
 		return towers
 	end
 
+	#ok
 	def get_all_tower_with_empty_circles(towers, return_empty)
 		towers_temp = []
 		if towers.kind_of?(Array)
@@ -180,33 +222,43 @@ class NewGame
 	end
 
 
-	def treat_destiny_towers(towers, circles, move)
-		is_circle_changed = false
+	def treat_destiny_towers(towers, circles)
 		destiny_tower = get_destiny_tower towers
 		if !destiny_tower.nil?
 			temp_circle = contains_circles_by_size circles, @game_circles[0].size
 			if destiny_tower.tower_circles.empty? && !temp_circle.nil?
-				destiny_tower.change_circle temp_circle
-				is_circle_changed = true
-				new_move if move
+				move = Move.new destiny_tower, temp_circle, nil, nil, nil, nil
+				return move
 			else
 				if !destiny_tower.tower_circles.empty?
 					next_size = destiny_tower.get_top_circle.size - 1
 					circle = contains_circles_by_size circles, next_size
 					if !circle.nil?
-						destiny_tower.change_circle circle
-						is_circle_changed = true
-						new_move if move
+						move = Move.new(destiny_tower, circle, self)
+						return move
+						#destiny_tower.change_circle circle
+						#is_circle_changed = true
+						#new_move if move
 					end
 				end
 			end
 		end
-		return is_circle_changed
+		return nil
 	end
 
+	#ok
 	def contains_circles_by_size(circles, size)
 		ind = circles.index{|v| v.size == size}
 		return circles[ind] if ind != nil
-	end	
+	end
+
+	#ok
+	def get_all_top_circles
+		circles = []
+		@towers.each {|key, value|
+			circles << value.get_top_circle if !value.tower_circles.empty?
+		}
+		return circles
+	end
 
 end
