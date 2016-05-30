@@ -60,7 +60,7 @@ class NewGame
 		move = nil
 		if Circle.moves_count == 0
 			destiny_tower = get_destiny_tower get_all_towers_available
-			move = new Move(destiny_tower, game_circles[game_circles.size - 1], nil, nil, self)
+			move = Move.new(destiny_tower, game_circles[game_circles.size - 1], nil, nil, self)
 			return move
 		end
 		circles = get_availables_circles
@@ -78,34 +78,43 @@ class NewGame
 					empty_towers.each{ |t|
 						towers_temp_one << t
 					}					
-					move = treat_destiny_towers towers_temp_one, circles, true
+					move = treat_destiny_towers towers_temp_one, circles
 					return move unless move.nil?
 					#get the last tower as destination tower
 					if !empty_towers.empty? && towers.empty?
-						#configure the move and return it
-						move = new Move(empty_towers[empty_towers.size - 1], c)
-						return move
+						#configure the move and return it					
+						move = Move.new(empty_towers[0], c)
+						break
 					elsif empty_towers.empty? && !towers.empty?
-						move = get_next_tower_with_closest_circle(get_all_towers_available, c)
-						tower_temp = get_next_tower_with_closest_circle get_availables_circles, c
-						if move.has_next_move && !tower_temp.nil? && !tower_temp.empty?
-							move = treat_next_move_conflict(move, towers_temp,c)
-						elsif tower_temp.nil? || tower_temp.empty?
-							next
+						move = get_next_move(c, circles, get_all_towers_available)
+						tower_temp = get_next_tower_with_closest_circle get_all_towers_available, c
+						if !move.nil? && move.has_next_move && !tower_temp.nil? && !tower_temp.empty?
+							move = treat_next_move_conflict(move, tower_temp,c)
+							break
 						else
-							move = new Move(tower_temp, c, nil, nil, nil)
+							move = Move.new(tower_temp[0], c)
+							break
 						end
 					else
-						move = get_next_tower_with_closest_circle(get_all_towers_available, c)
-					end	
+						tower_temp = get_next_tower_with_closest_circle(get_all_towers_available, c)
+						tower_temp.concat(empty_towers)
+						move = get_next_move(c, circles, get_all_towers_available)						
 
-					return move
+						if !move.nil? && move.has_next_move && !tower_temp.nil? && !tower_temp.empty?
+							move = treat_next_move_conflict(move, tower_temp,c)
+							break
+						else
+							move = Move.new(tower_temp[0], c)
+							break
+						end
+					end
 				}
 		end
+		return move
 	end
 
-	def treat_next_move_conflict(move, towers_temp, c, has_emptY_towers)
-		if towers_temp.size > 1
+	def treat_next_move_conflict(move, towers_temp, c, has_emptY_towers = nil)		
+		if towers_temp.size == 1
 			if move.next_tower.id == towers_temp[0].id
 				move.tower = move.next_tower
 				move.circle = move.next_circle

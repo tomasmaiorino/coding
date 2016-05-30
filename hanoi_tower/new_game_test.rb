@@ -405,17 +405,6 @@ class NewGameTest < Test::Unit::TestCase
 	end
 
 	#
-	# treat_next_move_conflict
-	#
-	def test_treat_next_move_conflict
-		#(move, towers_temp, c, has_emptY_towers)
-		circles_length = 4
-		towers_length = 4
-		game = NewGame.new
-		circles = game.load_game(circles_length, towers_length)
-	end
-
-	#
 	# get_next_move with empty towers
 	#
 	def test_get_next_move_with_empty
@@ -516,6 +505,408 @@ class NewGameTest < Test::Unit::TestCase
 		assert towers[0].get_top_circle.size > circles[3].size
 		assert_equal 1, towers[1].id
 		assert_equal 2, towers.size
+
+	end
+
+	#
+	# treat_next_move_conflict
+	#
+	def test_treat_next_move_conflict
+		circles_length = 4
+		towers_length = 4
+		game = NewGame.new
+		circles = game.load_game(circles_length, towers_length)
+		circle_to_move_1 = circles[2]
+		circle_to_move_2 = circles[3]
+
+		#first set
+		move = Move.new(nil, nil, game.towers[2], circle_to_move_1, nil)
+		towers_temp = [game.towers[2]]
+
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_equal 2, move.next_tower.id
+
+		game.treat_next_move_conflict(move, towers_temp, circle_to_move_2, nil)
+
+		assert_equal 2, move.tower.id
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+		assert_not_nil move.tower
+		assert_not_nil move.circle
+
+		#second set
+		move = Move.new(nil, nil, game.towers[2], circle_to_move_1, nil)
+		towers_temp = [game.towers[2], game.towers[3], game.towers[4]]
+
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_equal 2, move.next_tower.id
+
+		game.treat_next_move_conflict(move, towers_temp, circle_to_move_2, nil)
+
+		assert_equal 3, move.tower.id	
+		assert_not_nil move.circle
+		assert_not_nil move.tower
+		assert_equal circle_to_move_2.size, move.circle.size
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+		assert_equal circle_to_move_1.size, move.next_circle.size
+		assert_equal game.towers[2].id, move.next_tower.id
+
+		#third set
+		move = Move.new(nil, nil, game.towers[3], circle_to_move_1, nil)
+		towers_temp = [game.towers[3], game.towers[1], game.towers[4]]
+
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_equal 3, move.next_tower.id
+
+		game.treat_next_move_conflict(move, towers_temp, circle_to_move_2, nil)
+
+		assert_equal 1, move.tower.id	
+		assert_not_nil move.circle
+		assert_not_nil move.tower
+		assert_equal circle_to_move_2.size, move.circle.size
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+		assert_equal circle_to_move_1.size, move.next_circle.size
+		assert_equal game.towers[3].id, move.next_tower.id
+	end
+
+	#
+	# get_move
+	#
+	def test_get_move
+		circles_length = 4
+		towers_length = 3
+		game = NewGame.new
+		circles = game.load_game(circles_length, towers_length)
+		#first move
+		move = game.get_move
+		assert_equal 1, move.circle.size
+		assert_equal 3, move.tower.id
+		assert_equal 1, move.circle.actual_tower.id
+
+		move.does_move
+		
+		assert_equal 3, move.circle.actual_tower.id
+		#second move
+		move = game.get_move
+		assert_equal 2, move.circle.size
+		assert_equal 2, move.tower.id
+
+		assert_equal 1, move.circle.actual_tower.id
+
+		move.does_move
+
+		#third move
+		assert_equal 2, move.circle.actual_tower.id
+
+		move = nil
+		move = game.get_move
+
+		assert_equal 1, move.circle.size
+		assert_equal 2, move.tower.id
+		assert_equal 3, move.circle.actual_tower.id
+
+		move.does_move
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal 2, move.tower.id
+
+		move = nil
+		move = game.get_move
+		
+		assert_equal 3, move.circle.size
+		assert_equal 3, move.tower.id
+		assert_equal 1, move.circle.actual_tower.id
+
+		move.does_move
+
+		assert_equal 3, move.circle.actual_tower.id
+		
+		move = nil
+		move = game.get_move
+		
+		assert_equal 1, move.circle.size
+		assert_equal 1, move.tower.id
+		assert_equal 2, move.circle.actual_tower.id
+
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+
+		assert_equal 2, move.next_circle.size
+		assert_equal 3, move.next_tower.id
+		assert_equal 1, move.circle.size
+		assert_equal 1, move.tower.id
+		assert_equal 2, move.circle.actual_tower.id
+
+		move.does_move
+		move.does_next_move
+
+		assert_equal 3, move.next_circle.actual_tower.id
+		assert_equal move.next_circle.size, move.next_tower.get_top_circle.size
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move		
+
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+		assert_equal 1, move.circle.size
+		assert_equal 3, move.tower.id
+
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 2, move.tower.id
+		assert_equal 4, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		move.does_move
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 2, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 1, move.tower.id
+		assert_equal 2, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 1, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 2, move.tower.id
+		assert_equal 3, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 3, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+		assert_equal 2, move.next_tower.id
+		assert_equal 2, move.next_circle.size
+
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+		assert_equal 1, move.next_circle.actual_tower.id
+		assert_equal move.circle.size, move.next_circle.actual_tower.get_top_circle.size
+
+		move.does_move
+		move.does_next_move
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+		assert_equal 2, move.next_circle.actual_tower.id
+		assert_equal move.next_circle.size, move.next_circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 2, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 1, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		move.does_move
+
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 3, move.tower.id
+		assert_equal 2, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 3, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 1, move.tower.id
+		assert_equal 3, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 2, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_not_nil move.next_tower
+		assert_not_nil move.next_circle
+		assert_equal 1, move.next_tower.id
+		assert_equal 2, move.next_circle.size
+
+		assert_equal 3, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+		assert_equal 3, move.next_circle.actual_tower.id
+		assert_equal move.circle.size, move.next_circle.actual_tower.get_top_circle.size
+
+		move.does_move
+		move.does_next_move
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+		assert_equal 1, move.next_circle.actual_tower.id
+		assert_equal move.next_circle.size, move.next_circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 1, move.tower.id
+		assert_equal 1, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		assert_equal 2, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move.does_move
+
+		assert_equal 1, move.circle.actual_tower.id
+		assert_equal move.circle.size, move.circle.actual_tower.get_top_circle.size
+
+		move = nil
+		move = game.get_move
+
+		assert_not_nil move.tower
+		assert_equal 3, move.tower.id
+		assert_equal 4, move.circle.size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
 
 	end
 
