@@ -88,12 +88,13 @@ class NewGame
 					elsif empty_towers.empty? && !towers.empty?
 						move = get_next_tower_with_closest_circle(get_all_towers_available, c)
 						tower_temp = get_next_tower_with_closest_circle get_availables_circles, c
-						if !move.next_tower.nil? && move.next_tower.id == tower_temp.id
-							move.next_tower = nil
-							move.next_circle = nil
-						elsif
+						if move.has_next_move && !tower_temp.nil? && !tower_temp.empty?
+							move = treat_next_move_conflict(move, towers_temp,c)
+						elsif tower_temp.nil? || tower_temp.empty?
+							next
+						else
+							move = new Move(tower_temp, c, nil, nil, nil)
 						end
-							
 					else
 						move = get_next_tower_with_closest_circle(get_all_towers_available, c)
 					end	
@@ -103,13 +104,41 @@ class NewGame
 		end
 	end
 
+	def treat_next_move_conflict(move, towers_temp, c, has_emptY_towers)
+		if towers_temp.size > 1
+			if move.next_tower.id == towers_temp[0].id
+				move.tower = move.next_tower
+				move.circle = move.next_circle
+				move.next_tower = nil
+				move.next_circle = nil
+				return move
+			end
+		else
+			towers_temp.each{|t|
+				if t.id != move.next_tower.id
+					move.circle = c
+					move.tower = t
+					return move
+				end
+			}
+		end
+	end
+
 	#ok
-	def get_next_move(c, circles)
+	def get_next_move(c, circles, ignore_empty = nil)
 		actual_tower = c.actual_tower
 		move = nil
 		if actual_tower.tower_circles.size > 1
 			get_all_towers_available.each {|t_2|
 			if  !t_2.get_top_circle.nil? && actual_tower.tower_circles[actual_tower.tower_circles.size - 2].size == t_2.get_top_circle.size - 1
+				move = Move.new(nil, nil, t_2, actual_tower.tower_circles[actual_tower.tower_circles.size - 2], self)
+				return move
+			end
+			}
+		end
+		if move.nil? && !ignore_empty.nil? && !ignore_empty
+			get_all_towers_available.each {|t_2|
+			if  t_2.tower_circles.empty?
 				move = Move.new(nil, nil, t_2, actual_tower.tower_circles[actual_tower.tower_circles.size - 2], self)
 				return move
 			end

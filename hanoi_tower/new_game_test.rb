@@ -405,6 +405,38 @@ class NewGameTest < Test::Unit::TestCase
 	end
 
 	#
+	# treat_next_move_conflict
+	#
+	def test_treat_next_move_conflict
+		#(move, towers_temp, c, has_emptY_towers)
+		circles_length = 4
+		towers_length = 4
+		game = NewGame.new
+		circles = game.load_game(circles_length, towers_length)
+	end
+
+	#
+	# get_next_move with empty towers
+	#
+	def test_get_next_move_with_empty
+		circles_length = 4
+		towers_length = 4
+		game = NewGame.new
+		circles = game.load_game(circles_length, towers_length)
+			
+		move = game.get_next_move(circles[3], circles, false)
+
+		assert_not_nil move
+		assert_equal 2, move.next_tower.id
+		assert_equal 2, move.next_circle.size
+		assert_nil move.next_tower.get_top_circle
+		assert_empty move.next_tower.tower_circles
+		assert_nil move.tower
+		assert_nil move.circle
+		assert_not_nil move.game
+	end
+
+	#
 	# get_next_tower_with_closest_circle
 	#
 	def test_get_next_tower_with_closest_circle
