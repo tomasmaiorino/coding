@@ -10,7 +10,7 @@ class NewGame
 		@actual_move = 0
 	end
 
-	#ok
+	#tested
 	def load_towers(towers)
 		for i in 0..towers - 1
 	 		@towers[i +1] = Tower.new(i + 1, towers)
@@ -19,7 +19,7 @@ class NewGame
 		return @towers
 	end
 
-	#ok
+	#tested
 	def load_game(circles, towers)
 		@towers = load_towers(towers)
 		for i in 0..circles - 1
@@ -36,26 +36,37 @@ class NewGame
 		return circles_ret
 	end
 
+	#tested
 	def move(move)
-		#check if there is another move to make
-		if !move.nil? && move.has_next_move
-			#does the move
-			move.does_move
-		end
 		#check if the game is finished
-		if !finished
-			#get the new move
-			move = get_move
+		if finished
+			move = Move.new(nil, nil, nil, nil, nil) if move.nil?
+			move.moves_count = Circle.moves_count
+			return move
 		end
-		#does the move
-		move.does_move
-
+		if !move.nil?
+			#treat the game's move
+			if !move.tower.nil? && !move.circle.nil?
+				move.does_move
+			end
+			if !move.next_tower.nil? && !move.next_circle.nil?
+				move.does_next_move
+			end
+			#check if the game is finished
+			if finished
+				move.moves_count = Circle.moves_count
+				return move
+			end
+		end
+		#if the game isnot over, get next move
+		move = nil
+		move = get_move
 		#configure the move to be showed at the view layer
-		move.parsed_move = parse_move(move)
-		#return the move
+		#move.parsed_move = parse_move(move)
 		return move
 	end
 
+	#tested
 	def get_move
 		move = nil
 		if Circle.moves_count == 0
@@ -113,6 +124,7 @@ class NewGame
 		return move
 	end
 
+	#tested
 	def treat_next_move_conflict(move, towers_temp, c, has_emptY_towers = nil)		
 		if towers_temp.size == 1
 			if move.next_tower.id == towers_temp[0].id
@@ -133,7 +145,7 @@ class NewGame
 		end
 	end
 
-	#ok
+	#tested
 	def get_next_move(c, circles, ignore_empty = nil)
 		actual_tower = c.actual_tower
 		move = nil
@@ -156,7 +168,7 @@ class NewGame
 		return move
 	end
 
-	#ok
+	#tested
 	def get_next_tower_with_closest_circle(p_towers, circle)
 		new_towers = []
 		towers = []
@@ -184,7 +196,7 @@ class NewGame
 		return towers
 	end
 
-	#ok
+	#tested
 	def get_all_towers_available
      	towers = []
      	@towers.each {|key, value|
@@ -193,7 +205,7 @@ class NewGame
     	return towers
  	end
 
- 	#ok
+ 	#tested
 	def get_destiny_tower(towers)
 		tower = nil
 		if towers.kind_of?(Array)
@@ -214,7 +226,7 @@ class NewGame
 		return tower
 	end
 
-	#ok
+	#tested
 	def do_get_availables_circles(ignore_last_moved)
 		circles = []
 		get_all_top_circles.each {|v|
@@ -254,7 +266,7 @@ class NewGame
 		return circles
 	end
 
-	#ok
+	#tested
 	def get_availables_circles
 		circles = do_get_availables_circles(true)
 		if circles.empty?
@@ -263,7 +275,7 @@ class NewGame
 		return circles.sort {|a,b| a.size <=> b.size}
 	end
 
-	#ok
+	#tested
 	def get_towers_available_from_circle(p_towers, circle)
 		towers = []
 		if p_towers.kind_of?(Array)		
@@ -287,7 +299,7 @@ class NewGame
 		return towers
 	end
 
-	#ok
+	#tested
 	def get_all_tower_with_empty_circles(towers, return_empty)
 		towers_temp = []
 		if towers.kind_of?(Array)
@@ -310,7 +322,7 @@ class NewGame
 	return towers_temp
 	end
 
-	#ok
+	#tested
 	def treat_destiny_towers(towers, circles)
 		destiny_tower = get_destiny_tower towers
 		if !destiny_tower.nil?
@@ -335,19 +347,74 @@ class NewGame
 		return nil
 	end
 
-	#ok
+	#tested
 	def contains_circles_by_size(circles, size)
 		ind = circles.index{|v| v.size == size}
 		return circles[ind] if ind != nil
 	end
 
-	#ok
+	#tested
 	def get_all_top_circles
 		circles = []
 		@towers.each {|key, value|
 			circles << value.get_top_circle if !value.tower_circles.empty?
 		}
 		return circles
+	end
+
+	#tested
+	def finished
+		# retrieve the destiny tower
+		destiny_tower = get_destiny_tower get_all_towers_available
+		finished = false
+		if !destiny_tower.tower_circles.empty? && destiny_tower.tower_circles.size == @game_circles.size
+			is_ordered = true
+			destiny_tower.tower_circles.each_with_index{ |v, i|
+				if (i < destiny_tower.tower_circles.size - 1)
+					if (v.size - 1 != destiny_tower.tower_circles[i + 1].size)
+						is_ordered = false
+					end
+				end
+			}
+			finished = is_ordered
+		end
+		return finished
+	end
+
+	def parse_game
+		towers_separator = ';'
+		
+		inner_towers_separator = '-'
+		parsed_value = ''
+		towers.each {|key, value|
+			if key > 1
+				parsed_value << towers_separator
+			end
+			parsed_value << value.id.to_s
+			parsed_value << inner_towers_separator
+			parsed_value << parse_circles(value.tower_circles)
+		}
+		parsed_value << '@' + Circle.moves_count.to_s
+		return parsed_value
+	end
+
+	def parse_circles(circles)
+		circles_separator = ':'
+		parsed_value = ''
+		return '0:0:0' if circles.empty?
+		circles.each_with_index{|c, i|
+			if i > 0
+				parsed_value << '|'
+			end
+			circle = c.size.to_s << circles_separator << c.circle_move_count.to_s << circles_separator
+			parsed_value << circle
+			if c.last_moved && !c.never_played
+				parsed_value << '1'
+			else
+				parsed_value << '0'
+			end
+		}
+		return parsed_value
 	end
 
 end

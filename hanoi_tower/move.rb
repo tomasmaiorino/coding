@@ -1,6 +1,6 @@
 class Move
 
-	attr_accessor :tower,:circle, :next_tower, :next_circle, :game, :parsed_move
+	attr_accessor :tower,:circle, :next_tower, :next_circle, :game, :parsed_move, :moves_count
   	
   	def initialize(tower = nil, circle = nil, next_tower = nil, next_circle = nil, game = nil)
   		@tower = tower
@@ -9,6 +9,7 @@ class Move
   		@parsed_move = ''
   		@next_circle = next_circle
   		@next_tower = next_tower
+      @moves_count = nil
 	end
 
 
