@@ -1,4 +1,5 @@
 require_relative 'move'
+require_relative 'const_class'
 
 class NewGame
 
@@ -17,6 +18,50 @@ class NewGame
 		end
 		@towers = Hash[@towers.sort_by{|k, v| v.id}]
 		return @towers
+	end
+
+	def load_game_from_parsed(parsed_game)
+		towers = parsed_game.split(ConstClass::TOWER_SEPARATOR)
+		game_count = parsed_game.split('@')
+		towers.each{|t|
+			tower_content = t.split(ConstClass::TOWER_CIRCLE_SEPARATOR)
+			tower = Tower.new(tower_content[0], towers.size)
+			tower.tower_circles = load_circles(tower_content[1])
+		}
+	end
+
+	def load_towers_from_parsed_game(parsed_game)
+		towers_ret = {}
+		towers = parsed_game.split(ConstClass::TOWER_SEPARATOR)
+		game_count = parsed_game.split('@')
+		towers.each{|t|
+			tower_content = t.split(ConstClass::TOWER_CIRCLE_SEPARATOR)
+			puts "tower tower_content #{tower_content}"
+			puts "tower tower_content #{tower_content[0]}"
+			puts "towers.size #{towers.size}"
+			tower_content[1] = tower_content[1][0..tower_content[1].index(ConstClass::MOVE_COUNT_SEPARATOR)]
+			puts "tower tower_content #{tower_content[1]}"
+			tower = Tower.new(tower_content[0].to_i, towers.size.to_i)
+			tower.tower_circles = load_circles(tower_content[1], tower)
+			towers_ret[tower_content[0].to_i] = tower
+		}
+		puts "towers #{towers_ret}"
+		return towers_ret
+	end
+
+	#tested
+	def load_circles(parsed_circles, tower)
+		circles = []
+		return [] if parsed_circles == ConstClass::DEFAULT_PARSED_CIRCLE
+		parsed_circles = parsed_circles.split(ConstClass::CIRCLES_SEPARATOR)
+		parsed_circles.each{|c|
+			circle_content = c.split(ConstClass::CIRCLES_CONTENT_SEPARATOR)
+			circle = Circle.new(circle_content[0].to_i, tower, nil)
+			circle.circle_move_count = circle_content[1].to_i
+			circle.circle_last_move = circle_content[2].to_i
+			circles << circle
+		}
+		return circles
 	end
 
 	#tested
@@ -381,38 +426,33 @@ class NewGame
 		return finished
 	end
 
-	def parse_game
-		towers_separator = ';'
-		
-		inner_towers_separator = '-'
+	#tested
+	def parse_game		
 		parsed_value = ''
 		towers.each {|key, value|
 			if key > 1
-				parsed_value << towers_separator
+				parsed_value << ConstClass::TOWER_SEPARATOR
 			end
 			parsed_value << value.id.to_s
-			parsed_value << inner_towers_separator
+			parsed_value << ConstClass::TOWER_CIRCLE_SEPARATOR
 			parsed_value << parse_circles(value.tower_circles)
 		}
 		parsed_value << '@' + Circle.moves_count.to_s
 		return parsed_value
 	end
 
+	#tested
 	def parse_circles(circles)
-		circles_separator = ':'
 		parsed_value = ''
-		return '0:0:0' if circles.empty?
+		return '0:0:0' if circles.nil? || circles.empty?
 		circles.each_with_index{|c, i|
 			if i > 0
-				parsed_value << '|'
+				parsed_value << ConstClass::CIRCLES_SEPARATOR
 			end
-			circle = c.size.to_s << circles_separator << c.circle_move_count.to_s << circles_separator
+			circle = c.size.to_s << ConstClass::CIRCLES_CONTENT_SEPARATOR << c.circle_move_count.to_s << ConstClass::CIRCLES_CONTENT_SEPARATOR
 			parsed_value << circle
-			if c.last_moved && !c.never_played
-				parsed_value << '1'
-			else
-				parsed_value << '0'
-			end
+			parsed_value << c.circle_last_move.to_s
+			
 		}
 		return parsed_value
 	end

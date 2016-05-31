@@ -35,4 +35,5 @@ class Move
   def parse_move_from_request
 
   end
+
 end

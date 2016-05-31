@@ -63,6 +63,10 @@ class Circle
   		@@moves_count = 0
   	end
 
+  	def set_moves_count(moves_count)
+  		@@moves_count = moves_count
+  	end
+
 	def last_moved
 		@circle_last_move == @@moves_count
 	end
