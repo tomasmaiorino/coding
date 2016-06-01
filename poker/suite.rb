@@ -3,6 +3,7 @@ require_relative 'match_test'
 require_relative 'play_poker_test'
 require_relative 'player_test'
 require_relative 'poker_test'
+require_relative 'cards_util_test'
 
 #class Suite < Test::Unit::TestSuite
 #end
