@@ -1353,6 +1353,59 @@ class NewGameTest < Test::Unit::TestCase
 		assert_equal 3, towers[3].id
 		assert_empty towers[3].tower_circles
 
+		parsed_game = '1-3:0:0;2-1:0:0;3-2:1:1@4'
+
+		towers = game.load_towers_from_parsed_game(parsed_game)
+		assert_not_empty towers
+		assert_equal 1, towers[1].id
+		assert_equal 1, towers[1].tower_circles.size
+
+		assert_equal 2, towers[2].id
+		assert_equal 1, towers[2].tower_circles.size
+
+		assert_equal 3, towers[3].id
+		assert_equal 1, towers[3].tower_circles.size
+
+		parsed_game = '1-0:0:0;2-2:0:0;3-3:1:1|1:0:0@4'
+
+		towers = game.load_towers_from_parsed_game(parsed_game)
+		assert_not_empty towers
+		assert_equal 1, towers[1].id
+		assert_empty towers[1].tower_circles
+
+		assert_equal 2, towers[2].id
+		assert_equal 1, towers[2].tower_circles.size
+
+		assert_equal 3, towers[3].id
+		assert_equal 2, towers[3].tower_circles.size
+
+	end
+
+	#
+	# get_game_circles
+	#
+	def test_get_game_circles
+		game = NewGame.new
+		parsed_game = '1-3:0:0|2:0:0;2-1:0:0;3-0:0:0@0'
+
+		towers = game.load_towers_from_parsed_game(parsed_game)
+		
+		assert_empty game.game_circles
+
+		game.get_game_circles(towers)
+
+		assert_equal game.game_circles[1].size, towers[1].get_top_circle.size
+		assert_not_equal game.game_circles[1].object_id, towers[1].get_top_circle.object_id
+		assert_equal game.game_circles[2].size, towers[2].get_top_circle.size
+		assert_not_equal game.game_circles[2].object_id, towers[2].get_top_circle.object_id
+		assert_not_empty game.game_circles
+		assert_equal 3, game.game_circles.size
+
+		assert_equal 3, game.game_circles[0].size
+		assert_equal 2, game.game_circles[1].size
+		assert_equal 1, game.game_circles[2].size
+
+
 	end
 	
 end

@@ -21,31 +21,35 @@ class NewGame
 	end
 
 	def load_game_from_parsed(parsed_game)
-		towers = parsed_game.split(ConstClass::TOWER_SEPARATOR)
-		game_count = parsed_game.split('@')
-		towers.each{|t|
-			tower_content = t.split(ConstClass::TOWER_CIRCLE_SEPARATOR)
-			tower = Tower.new(tower_content[0], towers.size)
-			tower.tower_circles = load_circles(tower_content[1])
-		}
+		towers = load_towers_from_parsed_game(parsed_game)
+		@towers = towers
+		load_game_circles(towers)
 	end
 
+	def get_game_circles(towers)
+		circles = []
+		towers.each{|key, value|
+			if !value.tower_circles.empty?
+				value.tower_circles.each{|c|
+					circles << c.clone
+				}
+			end
+		}
+		@game_circles = circles.sort { |a,b| b.size <=> a.size }
+	end
+
+	#tested
 	def load_towers_from_parsed_game(parsed_game)
 		towers_ret = {}
 		towers = parsed_game.split(ConstClass::TOWER_SEPARATOR)
 		game_count = parsed_game.split('@')
 		towers.each{|t|
 			tower_content = t.split(ConstClass::TOWER_CIRCLE_SEPARATOR)
-			puts "tower tower_content #{tower_content}"
-			puts "tower tower_content #{tower_content[0]}"
-			puts "towers.size #{towers.size}"
-			tower_content[1] = tower_content[1][0..tower_content[1].index(ConstClass::MOVE_COUNT_SEPARATOR)]
-			puts "tower tower_content #{tower_content[1]}"
+			tower_content[1] = tower_content[1].sub(/@[\d]/, '')
 			tower = Tower.new(tower_content[0].to_i, towers.size.to_i)
 			tower.tower_circles = load_circles(tower_content[1], tower)
 			towers_ret[tower_content[0].to_i] = tower
 		}
-		puts "towers #{towers_ret}"
 		return towers_ret
 	end
 
