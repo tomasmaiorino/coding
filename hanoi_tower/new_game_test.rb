@@ -1405,7 +1405,59 @@ class NewGameTest < Test::Unit::TestCase
 		assert_equal 2, game.game_circles[1].size
 		assert_equal 1, game.game_circles[2].size
 
-
 	end
-	
+
+
+	#
+	# load_game_from_parsed
+	#
+	def test_load_game_from_parsed
+		game = NewGame.new
+		parsed_game = '1-3:0:0|2:0:0|1:0:0;2-0:0:0;3-0:0:0@0'
+
+		game.load_game_from_parsed(parsed_game)
+		
+		assert_not_equal game.game_circles[1].object_id, game.towers[1].get_top_circle.object_id
+		assert_equal game.game_circles[2].size, game.towers[1].get_top_circle.size
+		assert_not_equal game.game_circles[2].object_id, game.towers[2].get_top_circle.object_id
+		assert_not_empty game.game_circles
+		assert_equal 3, game.game_circles.size
+
+		assert_equal 3, game.game_circles[0].size
+		assert_equal 2, game.game_circles[1].size
+		assert_equal 1, game.game_circles[2].size
+	end
+
+
+=begin
+	#
+	# get_game_circle_with_move
+	#
+	def test_get_game_circle_with_move
+		circles_length = 3
+		towers_length = 3
+		game = NewGame.new
+		circles = game.load_game(circles_length, towers_length)
+		circles[0].initialize_moves_count
+		#circle 1 tower 3
+		move = game.move(nil)
+
+		assert_equal 1, move.circle.size
+		assert_equal 3, move.tower.id
+		assert_equal 1, move.circle.actual_tower.id
+
+		parsed_game = game.parse_game
+
+		assert_not_empty parsed_game
+
+		assert 3, game.towers[1].tower_circles.size
+		assert_empty game.towers[2].tower_circles
+		assert_empty game.towers[3].tower_circles
+		
+		assert_equal '1-3:0:0|2:0:0|1:0:0;2-0:0:0;3-0:0:0@0', parsed_game
+
+		game_2 = NewGame.new
+		game_2.
+	end
+=end	
 end

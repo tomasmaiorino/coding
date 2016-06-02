@@ -23,7 +23,7 @@ class NewGame
 	def load_game_from_parsed(parsed_game)
 		towers = load_towers_from_parsed_game(parsed_game)
 		@towers = towers
-		load_game_circles(towers)
+		get_game_circles(towers)
 	end
 
 	def get_game_circles(towers)
