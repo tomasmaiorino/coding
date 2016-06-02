@@ -20,12 +20,14 @@ class NewGame
 		return @towers
 	end
 
+	#tested
 	def load_game_from_parsed(parsed_game)
 		towers = load_towers_from_parsed_game(parsed_game)
 		@towers = towers
 		get_game_circles(towers)
 	end
 
+	#tested
 	def get_game_circles(towers)
 		circles = []
 		towers.each{|key, value|
@@ -459,6 +461,11 @@ class NewGame
 			
 		}
 		return parsed_value
+	end
+
+	#tested
+	def get_game_circle_by_size(circle_size)
+		game_circles[game_circles.index{|x| x.size == circle_size}]
 	end
 
 end

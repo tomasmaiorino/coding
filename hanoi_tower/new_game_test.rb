@@ -1428,6 +1428,25 @@ class NewGameTest < Test::Unit::TestCase
 		assert_equal 1, game.game_circles[2].size
 	end
 
+	#
+	# get_game_circle_by_size
+	#
+	def test_get_game_circle_by_size
+		circles_length = 3
+		towers_length = 3
+		game = NewGame.new
+		game.load_game(circles_length, towers_length)
+		
+		#first set
+		circle = game.get_game_circle_by_size(1)
+		assert_not_nil circle
+		assert_equal circle.size, game.game_circles[2].size
+
+		#second test
+		circle = game.get_game_circle_by_size(3)
+		assert_not_nil circle
+		assert_equal circle.size, game.game_circles[0].size
+	end
 
 =begin
 	#

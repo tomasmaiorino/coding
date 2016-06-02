@@ -107,9 +107,9 @@ class MoveTest < Test::Unit::TestCase
 	end
 
 	#
-	# parse_move
+	# parsed_move
 	#
-	def test_parse_move
+	def test_parsed_move
 		#first set
 		move = Move.new(@tower, @circle, nil, nil, nil)
 
@@ -137,5 +137,34 @@ class MoveTest < Test::Unit::TestCase
 		assert_not_nil move.parsed_move
 		assert_not_empty move.parsed_move
 		assert_equal '!!!', move.parsed_move
+	end
+
+	#
+	# def load_move(parsed_move)
+	#
+	def test_load_move
+		circles_length = 3
+		towers_length = 3
+		game = NewGame.new
+		game.load_game(circles_length, towers_length)
+		move = Move.new(game.towers[2], game.game_circles[2], nil, nil, nil)
+
+		assert_not_nil move.parsed_move
+		assert_equal '2!1!!', move.parsed_move
+
+		assert_equal move.tower.id, game.towers[2].id
+		assert_equal move.circle.size, game.game_circles[2].size
+		assert_nil move.next_tower
+		assert_nil move.next_circle
+
+		new_parsed_move = '3!1!!'
+		move.load_move(new_parsed_move)
+		
+		assert_not_nil move.circle
+		assert_not_nil move.tower
+		assert_equal 2, tower.id
+		assert_equal 1, circle.size
+
+
 	end
 end
