@@ -49,6 +49,7 @@ class NewGame
 			tower_content = t.split(ConstClass::TOWER_CIRCLE_SEPARATOR)
 			tower_content[1] = tower_content[1].sub(/@[\d]/, '')
 			tower = Tower.new(tower_content[0].to_i, towers.size.to_i)
+			tower.tower_circles = []
 			tower.tower_circles = load_circles(tower_content[1], tower)
 			towers_ret[tower_content[0].to_i] = tower
 		}
@@ -61,11 +62,13 @@ class NewGame
 		return [] if parsed_circles == ConstClass::DEFAULT_PARSED_CIRCLE
 		parsed_circles = parsed_circles.split(ConstClass::CIRCLES_SEPARATOR)
 		parsed_circles.each{|c|
-			circle_content = c.split(ConstClass::CIRCLES_CONTENT_SEPARATOR)
-			circle = Circle.new(circle_content[0].to_i, tower, nil)
-			circle.circle_move_count = circle_content[1].to_i
-			circle.circle_last_move = circle_content[2].to_i
-			circles << circle
+			if c.to_i > 0
+				circle_content = c.split(ConstClass::CIRCLES_CONTENT_SEPARATOR)
+				circle = Circle.new(circle_content[0].to_i, tower, nil)
+				circle.circle_move_count = circle_content[1].to_i
+				circle.circle_last_move = circle_content[2].to_i
+				circles << circle
+			end
 		}
 		return circles
 	end
@@ -91,7 +94,7 @@ class NewGame
 	def move(move)
 		#check if the game is finished
 		if finished
-			move = Move.new(nil, nil, nil, nil, nil) if move.nil?
+			move = Move.new(nil, nil, nil, nil, self) if move.nil?
 			move.moves_count = Circle.moves_count
 			return move
 		end
@@ -145,7 +148,7 @@ class NewGame
 					#get the last tower as destination tower
 					if !empty_towers.empty? && towers.empty?
 						#configure the move and return it					
-						move = Move.new(empty_towers[0], c)
+						move = Move.new(empty_towers[0], c, nil, nil, self)
 						break
 					elsif empty_towers.empty? && !towers.empty?
 						move = get_next_move(c, circles, get_all_towers_available)
@@ -154,7 +157,7 @@ class NewGame
 							move = treat_next_move_conflict(move, tower_temp,c)
 							break
 						else
-							move = Move.new(tower_temp[0], c)
+							move = Move.new(tower_temp[0], c, nil, nil, self)
 							break
 						end
 					else
@@ -166,7 +169,7 @@ class NewGame
 							move = treat_next_move_conflict(move, tower_temp,c)
 							break
 						else
-							move = Move.new(tower_temp[0], c)
+							move = Move.new(tower_temp[0], c, nil, nil, self)
 							break
 						end
 					end
@@ -379,7 +382,7 @@ class NewGame
 		if !destiny_tower.nil?
 			temp_circle = contains_circles_by_size circles, @game_circles[0].size
 			if destiny_tower.tower_circles.empty? && !temp_circle.nil?
-				move = Move.new(destiny_tower, temp_circle, nil, nil, nil)
+				move = Move.new(destiny_tower, temp_circle, nil, nil, self)
 				return move
 			else
 				if !destiny_tower.tower_circles.empty?
@@ -465,7 +468,8 @@ class NewGame
 
 	#tested
 	def get_game_circle_by_size(circle_size)
-		game_circles[game_circles.index{|x| x.size == circle_size}]
+		i = @game_circles.index{|x| x.size == circle_size}
+		return @game_circles[i]
 	end
 
 end

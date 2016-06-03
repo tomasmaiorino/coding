@@ -1,7 +1,6 @@
 require "test-unit"
 require_relative 'circle'
 require_relative 'tower'
-require_relative 'game'
 class CircleTest < Test::Unit::TestCase
 
 	def test_circle_initialize

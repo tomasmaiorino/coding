@@ -26,9 +26,11 @@ class Tower
 	end
 
 	def change_circle(circle)
+		puts ""
+		puts "step - #{Circle.moves_count}" 
 		puts "removing circle: #{circle.size} from actual_tower: #{circle.actual_tower.id}"
 
-		if !get_top_circle.nil?
+		if !@tower_circles.empty?
 			if circle.size > get_top_circle.size
 				puts "Circle size must be smaller than top circle #{get_top_circle.size} tower(#{@id})"
 				raise ArgumentError, "Circle size must be smaller than top circle #{get_top_circle.size} tower(#{@id})"

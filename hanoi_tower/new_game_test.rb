@@ -1018,7 +1018,7 @@ class NewGameTest < Test::Unit::TestCase
 		assert_nil move.next_circle
 
 		move.does_move
-
+		
 		assert game.finished
 
 	end

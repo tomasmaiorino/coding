@@ -2,7 +2,6 @@ require "test-unit"
 require "test/unit/assertions"
 require_relative 'circle'
 require_relative 'tower'
-require_relative 'game'
 class TowerTest < Test::Unit::TestCase 
 
 	#
