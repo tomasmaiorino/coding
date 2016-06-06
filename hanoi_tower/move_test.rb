@@ -17,7 +17,7 @@ class MoveTest < Test::Unit::TestCase
 	#
 	def test_initialize		
 		#first set		
-		move = Move.new(@tower, @circle, nil, nil, nil)
+		move = Move.new(@tower, @circle, nil, nil, NewGame.new)
 		assert_not_nil move.tower
 		assert_not_nil move.circle
 		assert_equal @circle.size, move.circle.size
@@ -28,7 +28,7 @@ class MoveTest < Test::Unit::TestCase
 		assert_equal '1!1!!', move.parsed_move
 
 		#second set		
-		move = Move.new(nil, nil, @tower_2, @circle_2, nil)
+		move = Move.new(nil, nil, @tower_2, @circle_2, NewGame.new)
 		assert_nil move.tower
 		assert_nil move.circle
 		assert_equal @circle_2.size, move.next_circle.size
@@ -113,21 +113,21 @@ class MoveTest < Test::Unit::TestCase
 	#
 	def test_parsed_move
 		#first set
-		move = Move.new(@tower, @circle, nil, nil, nil)
+		move = Move.new(@tower, @circle, nil, nil, NewGame.new)
 
 		assert_not_nil move.parsed_move
 		assert_not_empty move.parsed_move
 		assert_equal '1!1!!', move.parsed_move
 
 		#second set
-		move = Move.new(@tower, @circle, @tower_2, @circle_2, nil)
+		move = Move.new(@tower, @circle, @tower_2, @circle_2, NewGame.new)
 
 		assert_not_nil move.parsed_move
 		assert_not_empty move.parsed_move
 		assert_equal '1!1!2!2', move.parsed_move
 
 		#third set
-		move = Move.new(nil, nil, @tower_2, @circle_2, nil)
+		move = Move.new(nil, nil, @tower_2, @circle_2, NewGame.new)
 
 		assert_not_nil move.parsed_move
 		assert_not_empty move.parsed_move

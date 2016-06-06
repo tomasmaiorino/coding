@@ -421,7 +421,7 @@ class NewGame
 		# retrieve the destiny tower
 		destiny_tower = get_destiny_tower get_all_towers_available
 		finished = false
-		if !destiny_tower.tower_circles.empty? && destiny_tower.tower_circles.size == @game_circles.size
+		if !destiny_tower.nil? && !destiny_tower.tower_circles.empty? && destiny_tower.tower_circles.size == @game_circles.size
 			is_ordered = true
 			destiny_tower.tower_circles.each_with_index{ |v, i|
 				if (i < destiny_tower.tower_circles.size - 1)
