@@ -5,4 +5,4 @@ This is a repository with some code exercises resolved based on different websit
 
 **Java version 8.**
 
-**Ruby. **
+**Ruby.**
