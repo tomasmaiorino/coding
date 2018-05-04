@@ -1,6 +1,7 @@
-# DOJO
-These exercises are based on the dojos from site http://dojopuzzles.com/.
-1 - poker
-  http://dojopuzzles.com/problemas/exibe/poker/
-2 - hanoi
-  http://dojopuzzles.com/problemas/exibe/torres-de-hanoi/
+This is a repository with some code exercises resolved based on different websites, as codility and project euler, etc.
+
+## Used Technologies
+
+**Java version 8.**
+
+**Ruby. **
