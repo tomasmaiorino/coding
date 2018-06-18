@@ -1,10 +1,10 @@
-These exercises are based on the problems found in the project codility website: https://app.codility.com/programmers/
+These exercises are based on the problems found in the project codility website: https://www.hackerrank.com/
 
 ## Used Technologies
 
 **1. Java version 8.**
 
-**2. JUnit **
+**2. JUnit.**
 
 ## Considerations
 
