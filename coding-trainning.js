@@ -1,3 +1,41 @@
+
+//
+// merge overlapping intervals
+//
+let input = [[1,2],[3,6],[5,7], [4,8],[9,11]];
+//v2
+const mergeOverlappingIntervals = (input ) => {
+  input = input.sort((a,b) => a[0] - b[0])
+    let response = [[input[0][0], input[0][1]]];
+    for (let i = 1; i < input.length;i++) {
+     // check whether the arrays overllap
+      if(response[response.length - 1][1] 
+         >= input[i][0]) {
+        response[response.length - 1][1] = Math.max(response[response.length - 1][1], input[i][1])
+      } else {
+        response.push(input[i]);
+      }
+    }
+    return response;
+}
+//v1
+const mergeOverlappingIntervals1 => (input) {
+    let response = [];
+    input = input.sort((a,b) => a[0] - b[0]);
+    let tmp = [input[0][0], input[0][1]];
+    for (let i = 1; i < input.length;i++) {
+        if (tmp[1] >= input[i][0]) {
+            tmp[0] = Math.min(tmp[0], input[i][0]);
+            tmp[1] = Math.max(tmp[1], input[i][1]);
+        } else {                    
+            response.push([...tmp]);
+            tmp[0] = input[i][0];
+            tmp[1] = input[i][1];
+        }
+    }
+    response.push([...tmp])
+    return response;
+};
 //
 // first duplicate value
 //
