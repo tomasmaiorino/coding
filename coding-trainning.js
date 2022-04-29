@@ -1,4 +1,132 @@
+//
+// BST
+//
+class BST {
+  left = null;
+  right = null;
+  value = null;
+  constructor(value) {
+    this.value = value;
+  }
 
+  insert = (value) => {
+    let currentNode = this;
+    while (true) {
+      if (value == currentNode.value) {
+        return this;
+      } else if (value < currentNode.value) {
+        if (currentNode.left == null) {
+          currentNode.left = new BST(value);
+          return this;
+        } else {
+          currentNode = currentNode.left;
+        }
+      } else {
+        if (currentNode.right == null) {
+          currentNode.right = new BST(value);
+          return this;
+        } else {
+          currentNode = currentNode.right;
+        }
+      }
+    }
+  };
+
+  contains = (value) => {
+    let currentNode = this;
+    while (currentNode != null) {
+      if (value == currentNode.value) {
+        return true;
+      } else if (value < currentNode.value) {
+        currentNode = currentNode.left;
+      } else {
+        currentNode = currentNode.right;
+      }
+    }
+    return false;
+  };
+
+  findInOrderSuccessor = (value) => {
+    let currentNode = this;
+    let parentNode;
+    while (currentNode != null) {
+      if (value == currentNode.value) {
+        return currentNode.right != null
+          ? currentNode.right.getMinValue()
+          : parentNode.value;
+      } else if (value < currentNode.value) {
+        parentNode = currentNode;
+        currentNode = currentNode.left;
+      } else {
+        parentNode = currentNode;
+        currentNode = currentNode.right;
+      }
+    }
+    return null;
+  };
+
+  findInOrderPrecessor = (value) => {
+    let currentNode = this;
+    let parentNode;
+    while (currentNode != null) {
+      if (value == currentNode.value) {
+        return currentNode.left != null
+          ? currentNode.left.getMaxValue()
+          : parentNode.value;
+      } else if (value < currentNode.value) {
+        parentNode = currentNode;
+        currentNode = currentNode.left;
+      } else {
+        parentNode = currentNode;
+        currentNode = currentNode.right;
+      }
+    }
+    return null;
+  };
+
+  delete = (value, parentNode) => {
+    let currentNode = this;
+    while (currentNode != null) {
+      if (value < currentNode.value) {
+        parentNode = currentNode;
+        currentNode = currentNode.left;
+      } else if (value > currentNode.value) {
+        parentNode = currentNode;
+        currentNode = currentNode.right;
+      } else {
+        if (currentNode.left != null && currentNode.right != null) {
+          currentNode.value = currentNode.right.getMinValue(currentNode.right);
+          currentNode.right.delete(currentNode.value, currentNode);
+        } else if (parentNode.left == currentNode) {
+          parentNode.left =
+            currentNode.left != null ? currentNode.left : currentNode.right;
+          break;
+        } else if (parentNode.right == currentNode) {
+          parentNode.right =
+            currentNode.right != null ? currentNode.right : currentNode.left;
+          break;
+        }
+      }
+    }
+    return this;
+  };
+
+  getMinValue = () => {
+    let currentNode = this;
+    while (currentNode.left != null) {
+      currentNode = currentNode.left;
+    }
+    return currentNode.value;
+  };
+
+  getMaxValue = () => {
+    let currentNode = this;
+    while (currentNode.right != null) {
+      currentNode = currentNode.right;
+    }
+    return currentNode.value;
+  };
+}
 //
 // merge overlapping intervals
 //
