@@ -1,4 +1,64 @@
 //
+// binary search tree finding path
+//
+const findBinaryPath = (start, end, input) => {
+  let response = [];
+  let tmpQ = [];
+  let tmpF = [];
+  let currentNode = input;
+
+  while (currentNode != null) {
+    tmpQ.push(currentNode.val);
+    if (currentNode.val == start) {
+      break;
+    } else if (start >= currentNode.val) {
+      currentNode = currentNode.right;
+    } else {
+      currentNode = currentNode.left;
+    }
+  }
+
+  if (currentNode == null) {
+    //console.log("first item %s not found", start);
+    return [];
+  }
+
+  currentNode = input;
+
+  while (currentNode != null) {
+    tmpF.push(currentNode.val);
+    if (currentNode.val == end) {
+      break;
+    } else if (end >= currentNode.val) {
+      currentNode = currentNode.right;
+    } else {
+      currentNode = currentNode.left;
+    }
+  }
+
+  if (currentNode == null) {
+    //console.log("last item %s not found", end);
+    return [];
+  }
+
+  //console.log(tmpQ, tmpF);
+  let i = -1;
+
+  while (tmpF[i] == tmpQ[i]) {
+    i++;
+  }
+
+  for (let t = tmpQ.length - 1; t >= i; t--) {
+    response.push(tmpQ[t]);
+  }
+  //console.log("response ", response);
+  for (let t = i - 1; t < tmpF.length; t++) {
+    response.push(tmpF[t]);
+  }
+  return response;
+};
+
+//
 // BST
 //
 class BST {
