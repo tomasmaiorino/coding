@@ -1,3 +1,51 @@
+// Container With Most Water
+// https://leetcode.com/problems/container-with-most-water/
+//
+// Solution 2 Two pointers
+// O(n) -> complexity
+// O(n) -> space
+var maxArea = function(height) {
+    let i = 0;
+    let k = height.length - 1;
+    let resp = 0;
+    while(i < k) {
+        let tmp = doesCalculation(height[i], height[k], k - i);
+        resp = Math.max(tmp, resp);
+        if (height[i] <= height[k]) {
+            i += 1;
+        } else {
+            k -= 1;
+        }
+    }
+    return resp;
+}
+
+// Solution 1 brute force
+// O(n2) -> complexity
+// O(n) -> space
+var maxArea = function(height) {
+    let resp = 0;
+    let maxIndex = 0;
+    for(let i = 0; i< height.length; i++) {
+        let cont = 1;
+        for (let j = i + 1; j < height.length; j++) {
+            resp = Math.max(resp, doesCalculation(height[i], height[j], cont));
+            cont += 1;
+        }
+    }
+    return resp;
+};
+
+function doesCalculation(i, j, qt) {
+    if(i == j) {
+        return i * qt;
+    } else if (i < j) {
+        return i * qt
+    } else {
+        return j * qt
+    }
+}
+
 //
 // binary search tree finding path
 //
