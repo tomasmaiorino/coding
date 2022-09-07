@@ -1,3 +1,47 @@
+// Zigzag Conversion
+// https://leetcode.com/problems/zigzag-conversion/
+//
+// Solution 1 Elevator approach
+// O(n) -> complexity
+// O(n) -> space
+
+var convert = function(s, numRows) {
+    
+    if (numRows == 1) {
+        return s;
+    }
+    
+    let startCount = 1;
+    let rowLength = numRows;
+    let resp = new Map();
+    let cont = 0;
+    let forward = true;
+    
+    while(cont < s.length) {
+        if(!resp.get(startCount - 1)) {
+           resp.set(startCount - 1, '');
+        }
+        resp.set(startCount - 1, resp.get(startCount - 1) + '' + s[cont]);
+        
+        if(startCount == 1) {
+            forward = true;
+        }
+        if (startCount == rowLength) {
+            forward = false;
+        }
+        if (forward) {
+            startCount += 1
+        } else {
+            startCount -= 1
+        }
+        cont++;
+    }    
+    let t = '';
+    resp.forEach((v, k) => t += v)
+    return t;
+};
+
+
 // Container With Most Water
 // https://leetcode.com/problems/container-with-most-water/
 //
